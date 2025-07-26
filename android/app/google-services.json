@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "748391869538",
+    "firebase_url": "https://test-app-c7b2e-default-rtdb.firebaseio.com",
+    "project_id": "test-app-c7b2e",
+    "storage_bucket": "test-app-c7b2e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748391869538:android:071e8530f8696643dc753b",
+        "android_client_info": {
+          "package_name": "com.example.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXDAHEb2UyvuDzpQ0hEPPL5eQtbaFo9Vs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748391869538:android:85a6f035471c24a7dc753b",
+        "android_client_info": {
+          "package_name": "com.example.test_code"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXDAHEb2UyvuDzpQ0hEPPL5eQtbaFo9Vs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
