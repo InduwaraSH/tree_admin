@@ -1,5 +1,6 @@
 import 'package:admin/enter_detail.dart';
 import 'package:admin/firebase_options.dart';
+import 'package:admin/personRequestApprove.dart';
 import 'package:admin/test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const test()),
+                  MaterialPageRoute(builder: (context) => const personrequest()),
                 );
               },
               child: const Text('Show register requests'),
