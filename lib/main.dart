@@ -1,4 +1,3 @@
-
 import 'package:admin/enter_detail.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/test.dart';
@@ -9,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);// This must come after ensureInitialized
+  ); // This must come after ensureInitialized
   runApp(MyApp());
 }
 
@@ -41,16 +40,21 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const test(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const test()),
                 );
               },
               child: const Text('Update Bus Time Table'),
             ),
-            
-            
-            
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const test()),
+                );
+              },
+              child: const Text('Show register requests'),
+            ),
           ],
         ),
       ),
