@@ -27,7 +27,9 @@ class _personrequestState extends State<personrequest> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(request['managerId'] ?? "No ID"),
+          Text("Person ID: " + (request['managerId'] ?? "No ID")),
+          Text("Person Name: " + (request['managerName'] ?? "No Name")),
+          Text("Person Password: " + (request['managerPassword'] ?? "No Password")),
         ],
       ),
     );
