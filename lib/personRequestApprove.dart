@@ -11,91 +11,246 @@ class personrequest extends StatefulWidget {
 }
 
 class _personrequestState extends State<personrequest> {
-  Query personRequestDbref = FirebaseDatabase.instance.ref().child("managers");
+  Query personRequestDbref = FirebaseDatabase.instance.ref().child("employees");
 
   Widget requestItem({required Map request}) {
-    final String personId = request['managerId'] ?? 'No ID';
-    final String personName = request['Manager Name'] ?? 'No Name';
-    final String personPassword = request['Manager Password'] ?? 'No Password';
+    final String personId = request['employeeId'] ?? 'No ID';
+    final String personName = request['employeeName'] ?? 'No Name';
+    final String personPassword = request['employeePassword'] ?? 'No Password';
+    final String mobileNumber = request['employeeMobile'] ?? 'No Mobile';
+    final String jobPosition = request['employeePosition'] ?? 'No Job Position';
 
     return Align(
       alignment: Alignment.centerLeft,
-      child: Container(
-        padding: EdgeInsets.all(30),
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        width: double.infinity,
-        height: 185,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.person_2_rounded, size: 20, color: Colors.blue),
-                    SizedBox(width: 5),
+      child: Expanded(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
 
-                    Text(
-                      (request['managerName'] ?? "No ID"),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'sfpro',
-                        color: Colors.blue,
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(31, 158, 158, 158),
+                blurRadius: 10,
+                offset: Offset(10, 10),
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.all(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.person_2_rounded,
+                        size: 20,
+                        color: Colors.black,
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Person Name: " + (request['managerName'] ?? "No Name"),
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'sfpro',
-                  ),
-                ),
-                Text(
-                  "Person Password: " +
-                      (request['managerPassword'] ?? "No Password"),
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'sfpro',
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(width: 20),
-            Column(
-              children: [
-                CupertinoButton(
-                  child: Text(
-                    "Confirm Request",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {},
-                  color: Colors.green,
-                ),
-                SizedBox(height: 20),
+                      SizedBox(width: 5),
 
-                CupertinoButton(
-                  child: Text(
-                    "Decline Request",
-                    style: TextStyle(color: Colors.white),
+                      Text(
+                        (personName),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'sfpro',
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
-                  onPressed: () {},
-                  color: Colors.red,
-                ),
-              ],
-            ),
-          ],
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                        "Id Number                ",
+                        style: TextStyle(
+                          fontSize: 18,
+
+                          fontFamily: 'sfpro',
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      Text(
+                        ":   $personName",
+                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Password                 ",
+                        style: TextStyle(
+                          fontSize: 18,
+
+                          fontFamily: 'sfpro',
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      Text(
+                        ":   $personPassword",
+                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Mobile Number        ",
+                        style: TextStyle(
+                          fontSize: 18,
+
+                          fontFamily: 'sfpro',
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      Text(
+                        ":   $mobileNumber",
+                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                      ),
+                    ],
+                  ),
+
+                  Row(
+                    children: [
+                      Text(
+                        "Job Position             ",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic,
+                          fontFamily: 'sfpro',
+                        ),
+                      ),
+                      Text(
+                        ":   $jobPosition",
+                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(width: 20),
+              Column(
+                children: [
+                  CupertinoButton(
+                    onPressed: () {
+                      showCupertinoDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(
+                            title: Text(
+                              'Confirm Request',
+                              style: TextStyle(
+                                fontFamily: 'sfpro',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Text(
+                              'Are you sure you want to confirm $personName\'s request?',
+                            ),
+                            actions: [
+                              CupertinoDialogAction(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontFamily: 'sfpro',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                              CupertinoDialogAction(
+                                child: Text(
+                                  'Confirm',
+                                  style: TextStyle(
+                                    fontFamily: 'sfpro',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  // Add your confirm logic here
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    color: Colors.green,
+                    child: Text(
+                      "Confirm",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  CupertinoButton(
+                    onPressed: () {
+                      showCupertinoDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(
+                            title: Text(
+                              'Decline Request',
+                              style: TextStyle(
+                                fontFamily: 'sfpro',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Text(
+                              'Are you sure you want to decline $personName\'s request?',
+                            ),
+                            actions: [
+                              CupertinoDialogAction(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontFamily: 'sfpro',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                              CupertinoDialogAction(
+                                child: Text(
+                                  'Decline',
+                                  style: TextStyle(
+                                    fontFamily: 'sfpro',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  // Add your confirm logic here
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    color: Colors.red,
+                    child: Text(
+                      "Decline",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
