@@ -1,10 +1,14 @@
+import 'package:admin/registration.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class personrequest extends StatefulWidget {
   const personrequest({super.key});
+  
 
   @override
   State<personrequest> createState() => _personrequestState();
@@ -19,6 +23,8 @@ class _personrequestState extends State<personrequest> {
     final String personPassword = request['employeePassword'] ?? 'No Password';
     final String mobileNumber = request['employeeMobile'] ?? 'No Mobile';
     final String jobPosition = request['employeePosition'] ?? 'No Job Position';
+
+    
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -78,7 +84,7 @@ class _personrequestState extends State<personrequest> {
                         ),
                       ),
                       Text(
-                        ":   $personName",
+                        ":   $personId",
                         style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
                       ),
                     ],
@@ -143,7 +149,7 @@ class _personrequestState extends State<personrequest> {
                     onPressed: () {
                       showCupertinoDialog(
                         context: context,
-                        builder: (BuildContext context) {
+                        builder: (BuildContext dialogContext) {
                           return CupertinoAlertDialog(
                             title: Text(
                               'Confirm Request',
@@ -165,7 +171,8 @@ class _personrequestState extends State<personrequest> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                onPressed: () => Navigator.of(context).pop(),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
                               ),
                               CupertinoDialogAction(
                                 child: Text(
@@ -176,9 +183,11 @@ class _personrequestState extends State<personrequest> {
                                     color: Colors.green,
                                   ),
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
                                   // Add your confirm logic here
-                                  Navigator.of(context).pop();
+                                Navigator.of(dialogContext).pop();
+                                 AuthReg().registerUser(context, "$personId@gmail.com", personPassword);
+                                 
                                 },
                               ),
                             ],
@@ -198,7 +207,7 @@ class _personrequestState extends State<personrequest> {
                     onPressed: () {
                       showCupertinoDialog(
                         context: context,
-                        builder: (BuildContext context) {
+                        builder: (BuildContext dialogContext) {
                           return CupertinoAlertDialog(
                             title: Text(
                               'Decline Request',
@@ -220,7 +229,7 @@ class _personrequestState extends State<personrequest> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                onPressed: () => Navigator.of(context).pop(),
+                                onPressed: () async {},
                               ),
                               CupertinoDialogAction(
                                 child: Text(

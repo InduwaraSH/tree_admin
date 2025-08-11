@@ -1,10 +1,90 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-class authReg extends StatelessWidget {
-  const authReg({super.key});
+class AuthReg {
+  //AuthReg(String s, String t);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  Future<void> registerUser(BuildContext context,String emailAddress,String password) async {
+    bool result = await InternetConnection().hasInternetAccess;
+    if (result == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'No internet connection',
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+          duration: Duration(seconds: 5),
+          backgroundColor: Colors.grey,
+        ),
+      );
+      return;
+    } else {
+      try {
+        print("starting");
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailAddress,
+          password: password,
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print(
+            'The password provided is too weak.',
+          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(
+            SnackBar(
+              content: Text(
+                'The password provided is too weak.',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              duration: Duration(seconds: 5),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (e.code == 'email-already-in-use') {
+          print(
+            'The account already exists for that email.',
+          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(
+            SnackBar(
+              content: Text(
+                'The account already exists for that email.',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              duration: Duration(seconds: 5),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(
+            SnackBar(
+              content: Text(
+                'ok',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              duration: Duration(seconds: 5),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 }
