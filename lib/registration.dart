@@ -1,3 +1,4 @@
+import 'package:admin/deleteRTdata.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class AuthReg {
     BuildContext context,
     String emailAddress,
     String password,
+    String IDnum,
   ) async {
     bool result = await InternetConnection().hasInternetAccess;
     if (result == false) {
@@ -97,6 +99,7 @@ class AuthReg {
               backgroundColor: Colors.green,
             ),
           );
+          deleteRealtimeData().deleteData(IDnum);
         }
       } catch (e) {
         print(e);

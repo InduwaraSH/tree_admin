@@ -8,7 +8,6 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 
 class personrequest extends StatefulWidget {
   const personrequest({super.key});
-  
 
   @override
   State<personrequest> createState() => _personrequestState();
@@ -23,8 +22,6 @@ class _personrequestState extends State<personrequest> {
     final String personPassword = request['employeePassword'] ?? 'No Password';
     final String mobileNumber = request['employeeMobile'] ?? 'No Mobile';
     final String jobPosition = request['employeePosition'] ?? 'No Job Position';
-
-    
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -51,25 +48,37 @@ class _personrequestState extends State<personrequest> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person_2_rounded,
-                        size: 20,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 5),
-
-                      Text(
-                        (personName),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'sfpro',
-                          color: Colors.black,
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: 10,
+                      top: 5,
+                      right: 10,
+                      bottom: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 91, 91, 91),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.person_2_rounded,
+                          size: 20,
+                          color: Colors.white,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 5),
+
+                        Text(
+                          (personName),
+                          style: TextStyle(
+                            fontSize: 20,
+
+                            fontFamily: 'sfpro',
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 10),
                   Row(
@@ -185,9 +194,13 @@ class _personrequestState extends State<personrequest> {
                                 ),
                                 onPressed: () async {
                                   // Add your confirm logic here
-                                Navigator.of(dialogContext).pop();
-                                 AuthReg().registerUser(context, "$personId@gmail.com", personPassword);
-                                 
+                                  Navigator.of(dialogContext).pop();
+                                  AuthReg().registerUser(
+                                    context,
+                                    "$personId@gmail.com",
+                                    personPassword,
+                                    personId
+                                  );
                                 },
                               ),
                             ],
