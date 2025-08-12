@@ -6,7 +6,11 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 class AuthReg {
   //AuthReg(String s, String t);
 
-  Future<void> registerUser(BuildContext context,String emailAddress,String password) async {
+  Future<void> registerUser(
+    BuildContext context,
+    String emailAddress,
+    String password,
+  ) async {
     bool result = await InternetConnection().hasInternetAccess;
     if (result == false) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -15,6 +19,8 @@ class AuthReg {
             'No internet connection',
             style: TextStyle(
               color: Colors.black,
+              fontFamily: 'sfpro',
+              fontWeight: FontWeight.bold,
             ),
           ),
           duration: Duration(seconds: 5),
@@ -24,6 +30,20 @@ class AuthReg {
       return;
     } else {
       try {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Waiting...',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'sfpro',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.black,
+          ),
+        );
         print("starting");
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailAddress,
@@ -31,17 +51,15 @@ class AuthReg {
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          print(
-            'The password provided is too weak.',
-          );
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(
+          print('The password provided is too weak.');
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 'The password provided is too weak.',
                 style: TextStyle(
                   color: Colors.white,
+                  fontFamily: 'sfpro',
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               duration: Duration(seconds: 5),
@@ -49,17 +67,15 @@ class AuthReg {
             ),
           );
         } else if (e.code == 'email-already-in-use') {
-          print(
-            'The account already exists for that email.',
-          );
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(
+          print('The account already exists for that email.');
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 'The account already exists for that email.',
                 style: TextStyle(
                   color: Colors.white,
+                  fontFamily: 'sfpro',
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               duration: Duration(seconds: 5),
@@ -67,14 +83,14 @@ class AuthReg {
             ),
           );
         } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'ok',
+                'This Account Verification is Completed!',
                 style: TextStyle(
                   color: Colors.white,
+                  fontFamily: 'sfpro',
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               duration: Duration(seconds: 5),
