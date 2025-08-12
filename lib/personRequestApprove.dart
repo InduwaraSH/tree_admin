@@ -1,3 +1,4 @@
+import 'package:admin/deleteRTdata.dart';
 import 'package:admin/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -199,7 +200,7 @@ class _personrequestState extends State<personrequest> {
                                     context,
                                     "$personId@gmail.com",
                                     personPassword,
-                                    personId
+                                    personId,
                                   );
                                 },
                               ),
@@ -211,7 +212,11 @@ class _personrequestState extends State<personrequest> {
                     color: Colors.green,
                     child: Text(
                       "Confirm",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'sfpro',
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -242,7 +247,9 @@ class _personrequestState extends State<personrequest> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                onPressed: () async {},
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop();
+                                },
                               ),
                               CupertinoDialogAction(
                                 child: Text(
@@ -255,7 +262,8 @@ class _personrequestState extends State<personrequest> {
                                 ),
                                 onPressed: () {
                                   // Add your confirm logic here
-                                  Navigator.of(context).pop();
+                                  Navigator.of(dialogContext).pop();
+                                  deleteRealtimeData().deleteData(personId);
                                 },
                               ),
                             ],
@@ -281,7 +289,12 @@ class _personrequestState extends State<personrequest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Person Requests')),
+      appBar: AppBar(
+        title: Text(
+          'Person Requests',
+          style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
+        ),
+      ),
       body: FirebaseAnimatedList(
         query: personRequestDbref,
         itemBuilder:
