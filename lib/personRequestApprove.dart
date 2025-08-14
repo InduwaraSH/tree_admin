@@ -291,7 +291,7 @@ class _personrequestState extends State<personrequest> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Person Requests',
+          'User Requests',
           style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
         ),
       ),

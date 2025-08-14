@@ -46,12 +46,28 @@ class AuthReg {
             backgroundColor: Colors.black,
           ),
         );
-        print("starting");
+        
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailAddress,
           password: password,
         );
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'This Account Verification is Completed!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'sfpro',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              duration: Duration(seconds: 5),
+              backgroundColor: Colors.green,
+            ),
+          );
+          deleteRealtimeData().deleteData(IDnum);
       } on FirebaseAuthException catch (e) {
+        print("FirebaseAuthException: ${e.code}");
         if (e.code == 'weak-password') {
           print('The password provided is too weak.');
           ScaffoldMessenger.of(context).showSnackBar(
@@ -85,21 +101,7 @@ class AuthReg {
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'This Account Verification is Completed!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'sfpro',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              duration: Duration(seconds: 5),
-              backgroundColor: Colors.green,
-            ),
-          );
-          deleteRealtimeData().deleteData(IDnum);
+          
         }
       } catch (e) {
         print(e);
