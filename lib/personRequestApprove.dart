@@ -105,7 +105,6 @@ class _personrequestState extends State<personrequest> {
                         "Password                 ",
                         style: TextStyle(
                           fontSize: 18,
-
                           fontFamily: 'sfpro',
                           fontStyle: FontStyle.italic,
                         ),

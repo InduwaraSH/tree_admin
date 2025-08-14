@@ -65,7 +65,7 @@ class AuthReg {
               backgroundColor: Colors.green,
             ),
           );
-          deleteRealtimeData().deleteData(IDnum);
+          //deleteRealtimeData().deleteData(IDnum);
       } on FirebaseAuthException catch (e) {
         print("FirebaseAuthException: ${e.code}");
         if (e.code == 'weak-password') {
