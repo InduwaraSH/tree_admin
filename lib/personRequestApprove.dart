@@ -23,6 +23,7 @@ class _personrequestState extends State<personrequest> {
     final String personPassword = request['employeePassword'] ?? 'No Password';
     final String mobileNumber = request['employeeMobile'] ?? 'No Mobile';
     final String jobPosition = request['employeePosition'] ?? 'No Job Position';
+    final String office = request['employeeLocation'] ?? 'No Office';
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -149,6 +150,22 @@ class _personrequestState extends State<personrequest> {
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      Text(
+                        "Working Office         ",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic,
+                          fontFamily: 'sfpro',
+                        ),
+                      ),
+                      Text(
+                        ":   $office",
+                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               SizedBox(width: 20),
@@ -200,6 +217,10 @@ class _personrequestState extends State<personrequest> {
                                     "$personId@gmail.com",
                                     personPassword,
                                     personId,
+                                    jobPosition,
+                                    office,
+                                    mobileNumber,
+                                    personName
                                   );
                                 },
                               ),

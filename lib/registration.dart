@@ -1,4 +1,5 @@
 import 'package:admin/deleteRTdata.dart';
+import 'package:admin/saveDataBeforeDel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,10 @@ class AuthReg {
     String emailAddress,
     String password,
     String IDnum,
+    String position,
+    String office,
+    String mobile,
+    String name,
   ) async {
     bool result = await InternetConnection().hasInternetAccess;
     if (result == false) {
@@ -46,26 +51,32 @@ class AuthReg {
             backgroundColor: Colors.black,
           ),
         );
-        
+
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailAddress,
           password: password,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'This Account Verification is Completed!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'sfpro',
-                  fontWeight: FontWeight.bold,
-                ),
+        
+        Savedatabeforedel()
+            .SaveData(IDnum, position, office, mobile,name)
+            .whenComplete(() {
+              deleteRealtimeData().deleteData(IDnum);
+            }).whenComplete(() {
+              ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'This Account Verification is Completed!',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'sfpro',
+                fontWeight: FontWeight.bold,
               ),
-              duration: Duration(seconds: 5),
-              backgroundColor: Colors.green,
             ),
-          );
-          //deleteRealtimeData().deleteData(IDnum);
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.green,
+          ),
+        );
+            });
       } on FirebaseAuthException catch (e) {
         print("FirebaseAuthException: ${e.code}");
         if (e.code == 'weak-password') {
@@ -100,9 +111,7 @@ class AuthReg {
               backgroundColor: Colors.red,
             ),
           );
-        } else {
-          
-        }
+        } else {}
       } catch (e) {
         print(e);
       }
