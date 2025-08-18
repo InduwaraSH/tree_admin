@@ -1,4 +1,5 @@
-import 'package:admin/branchRequestApprove.dart';
+import 'package:admin/branchRequestApprove_ARM.dart';
+import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/enter_detail.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/personRequestApprove.dart';
@@ -67,11 +68,23 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Branchrequestapprove(),
+                    builder: (context) => const Branchrequestapprove_RM(),
                   ),
                 );
               },
               child: const Text('Show Branch Requests'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Branchrequestapprove_ARM(),
+                  ),
+                );
+              },
+              child: const Text('Show ARM Branch Requests'),
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 import 'package:admin/deleteBranchdata.dart';
 import 'package:admin/deleteRTdata.dart';
 import 'package:admin/registration.dart';
-import 'package:admin/saveDataBeforDel_Branch.dart';
+import 'package:admin/saveDataBeforDel_Branch_RM.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -9,15 +9,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-class Branchrequestapprove extends StatefulWidget {
-  const Branchrequestapprove({super.key});
+class Branchrequestapprove_RM extends StatefulWidget {
+  const Branchrequestapprove_RM({super.key});
 
   @override
-  State<Branchrequestapprove> createState() => _BranchrequestapproveState();
+  State<Branchrequestapprove_RM> createState() => _Branchrequestapprove_RMState();
 }
 
-class _BranchrequestapproveState extends State<Branchrequestapprove> {
-  Query branchRequestDbref = FirebaseDatabase.instance.ref().child("branches");
+class _Branchrequestapprove_RMState extends State<Branchrequestapprove_RM> {
+  Query branchRequestDbref = FirebaseDatabase.instance.ref().child(
+    "RM_branches",
+  );
 
   Widget requestItem({required Map request}) {
     final String branchID = request['branchId'] ?? 'No ID';
@@ -86,7 +88,7 @@ class _BranchrequestapproveState extends State<Branchrequestapprove> {
                   Row(
                     children: [
                       Text(
-                        "Branch Id                ",
+                        "Branch Id                   ",
                         style: TextStyle(
                           fontSize: 18,
 
@@ -137,7 +139,7 @@ class _BranchrequestapproveState extends State<Branchrequestapprove> {
                   Row(
                     children: [
                       Text(
-                        "Branch TP             ",
+                        "Branch TP                  ",
                         style: TextStyle(
                           fontSize: 18,
                           fontStyle: FontStyle.italic,
@@ -196,6 +198,7 @@ class _BranchrequestapproveState extends State<Branchrequestapprove> {
                                 onPressed: () async {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
+                                  
                                   bool result = await InternetConnection()
                                       .hasInternetAccess;
                                   if (result == false) {
@@ -221,6 +224,7 @@ class _BranchrequestapproveState extends State<Branchrequestapprove> {
                                       branchManager,
                                       branchTP,
                                       context,
+                                      'RM',
                                     );
                                   }
                                 },
@@ -284,7 +288,7 @@ class _BranchrequestapproveState extends State<Branchrequestapprove> {
                                 onPressed: () {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                 Deletebranchdata().deleteData(branchID);
+                                  Deletebranchdata().deleteData(branchID);
                                 },
                               ),
                             ],

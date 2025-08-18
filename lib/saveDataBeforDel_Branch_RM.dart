@@ -3,9 +3,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Savedatabeforedel_branch {
-  DatabaseReference new_Branch_Data_Reference = FirebaseDatabase.instance
+  DatabaseReference new_Branch_Data_Reference_RM = FirebaseDatabase.instance
       .ref()
-      .child("RO_branch_data_saved");
+      .child("RM_branch_data_saved");
+
+  
 
   Future<void> SaveData(
     String idnum,
@@ -13,9 +15,10 @@ class Savedatabeforedel_branch {
     String manager,
     String tp,
     BuildContext context,
+    String branchType,
   ) async {
     try {
-      await new_Branch_Data_Reference
+      await new_Branch_Data_Reference_RM
           .child(idnum)
           .set({
             'branchID': idnum,

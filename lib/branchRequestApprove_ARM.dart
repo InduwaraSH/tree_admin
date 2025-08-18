@@ -1,5 +1,8 @@
+import 'package:admin/deleteBranchdata.dart';
 import 'package:admin/deleteRTdata.dart';
 import 'package:admin/registration.dart';
+import 'package:admin/saveDataBeforDel_Branch_ARM.dart';
+import 'package:admin/saveDataBeforDel_Branch_RM.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -7,23 +10,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-class personrequest extends StatefulWidget {
-  const personrequest({super.key});
+class Branchrequestapprove_ARM extends StatefulWidget {
+  const Branchrequestapprove_ARM({super.key});
 
   @override
-  State<personrequest> createState() => _personrequestState();
+  State<Branchrequestapprove_ARM> createState() => _Branchrequestapprove_ARMState();
 }
 
-class _personrequestState extends State<personrequest> {
-  Query personRequestDbref = FirebaseDatabase.instance.ref().child("employees");
+class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
+  Query branchRequestDbref = FirebaseDatabase.instance.ref().child(
+    "ARM_branches",
+  );
 
   Widget requestItem({required Map request}) {
-    final String personId = request['employeeId'] ?? 'No ID';
-    final String personName = request['employeeName'] ?? 'No Name';
-    final String personPassword = request['employeePassword'] ?? 'No Password';
-    final String mobileNumber = request['employeeMobile'] ?? 'No Mobile';
-    final String jobPosition = request['employeePosition'] ?? 'No Job Position';
-    final String office_location = request['employeeLocation'] ?? 'No Office';
+    final String branchID = request['branchId'] ?? 'No ID';
+    final String ReleventRMbranch = request['Relevent RO Branch'] ?? 'No TP';
+    final String branchLocation = request['branchLocation'] ?? 'No Location';
+    //final String branchManager = request['branchManager'] ?? 'No Selected';
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -71,7 +74,7 @@ class _personrequestState extends State<personrequest> {
                         SizedBox(width: 5),
 
                         Text(
-                          (personName),
+                          (branchLocation),
                           style: TextStyle(
                             fontSize: 20,
 
@@ -86,7 +89,7 @@ class _personrequestState extends State<personrequest> {
                   Row(
                     children: [
                       Text(
-                        "Id Number                ",
+                        "Branch Id                   ",
                         style: TextStyle(
                           fontSize: 18,
 
@@ -95,7 +98,7 @@ class _personrequestState extends State<personrequest> {
                         ),
                       ),
                       Text(
-                        ":   $personId",
+                        ":   $branchID",
                         style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
                       ),
                     ],
@@ -103,7 +106,7 @@ class _personrequestState extends State<personrequest> {
                   Row(
                     children: [
                       Text(
-                        "Password                 ",
+                        "Branch Location        ",
                         style: TextStyle(
                           fontSize: 18,
                           fontFamily: 'sfpro',
@@ -111,7 +114,7 @@ class _personrequestState extends State<personrequest> {
                         ),
                       ),
                       Text(
-                        ":   $personPassword",
+                        ":   $branchLocation",
                         style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
                       ),
                     ],
@@ -119,7 +122,7 @@ class _personrequestState extends State<personrequest> {
                   Row(
                     children: [
                       Text(
-                        "Mobile Number        ",
+                        "RM Location       ",
                         style: TextStyle(
                           fontSize: 18,
 
@@ -128,44 +131,28 @@ class _personrequestState extends State<personrequest> {
                         ),
                       ),
                       Text(
-                        ":   $mobileNumber",
+                        ":   $ReleventRMbranch",
                         style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
                       ),
                     ],
                   ),
 
-                  Row(
-                    children: [
-                      Text(
-                        "Job Position             ",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic,
-                          fontFamily: 'sfpro',
-                        ),
-                      ),
-                      Text(
-                        ":   $jobPosition",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Working Office         ",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic,
-                          fontFamily: 'sfpro',
-                        ),
-                      ),
-                      Text(
-                        ":   $office_location",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       "Branch TP                  ",
+                  //       style: TextStyle(
+                  //         fontSize: 18,
+                  //         fontStyle: FontStyle.italic,
+                  //         fontFamily: 'sfpro',
+                  //       ),
+                  //     ),
+                  //     Text(
+                  //       ":   $branchTP",
+                  //       style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               SizedBox(width: 20),
@@ -185,7 +172,7 @@ class _personrequestState extends State<personrequest> {
                               ),
                             ),
                             content: Text(
-                              'Are you sure you want to confirm $personName\'s request?',
+                              'Are you sure you want to confirm $branchLocation\'s request?',
                             ),
                             actions: [
                               CupertinoDialogAction(
@@ -212,16 +199,34 @@ class _personrequestState extends State<personrequest> {
                                 onPressed: () async {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  AuthReg().registerUser(
-                                    context,
-                                    "$personId@gmail.com",
-                                    personPassword,
-                                    personId,
-                                    jobPosition,
-                                    office_location,
-                                    mobileNumber,
-                                    personName
-                                  );
+                                  
+                                  bool result = await InternetConnection()
+                                      .hasInternetAccess;
+                                  if (result == false) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'No internet connection',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'sfpro',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        duration: Duration(seconds: 5),
+                                        backgroundColor: Colors.grey,
+                                      ),
+                                    );
+                                    return;
+                                  } else {
+                                    Savedatabeforedel_branch_ARM().SaveData(
+                                      branchID,
+                                      branchLocation,
+                                      ReleventRMbranch,
+                                      context
+                                      
+                                    );
+                                  }
                                 },
                               ),
                             ],
@@ -255,7 +260,7 @@ class _personrequestState extends State<personrequest> {
                               ),
                             ),
                             content: Text(
-                              'Are you sure you want to decline $personName\'s request?',
+                              'Are you sure you want to decline $branchLocation\'s request?',
                             ),
                             actions: [
                               CupertinoDialogAction(
@@ -283,7 +288,7 @@ class _personrequestState extends State<personrequest> {
                                 onPressed: () {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  deleteRealtimeData().deleteData(personId);
+                                  Deletebranchdata().deleteData(branchID);
                                 },
                               ),
                             ],
@@ -311,12 +316,12 @@ class _personrequestState extends State<personrequest> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'User Requests',
+          'Branch Requests',
           style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
         ),
       ),
       body: FirebaseAnimatedList(
-        query: personRequestDbref,
+        query: branchRequestDbref,
         itemBuilder:
             (
               BuildContext context,
