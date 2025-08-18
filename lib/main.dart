@@ -1,3 +1,4 @@
+import 'package:admin/branchRequestApprove.dart';
 import 'package:admin/enter_detail.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/personRequestApprove.dart';
@@ -8,7 +9,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   ); // This must come after ensureInitialized
@@ -35,7 +36,6 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(title: Text('Home Page')),
       body: Center(
         child: Column(
@@ -54,10 +54,24 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const personrequest()),
+                  MaterialPageRoute(
+                    builder: (context) => const personrequest(),
+                  ),
                 );
               },
               child: const Text('Show register requests'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Branchrequestapprove(),
+                  ),
+                );
+              },
+              child: const Text('Show Branch Requests'),
             ),
           ],
         ),
