@@ -19,7 +19,7 @@ class Savedatabeforedel_branch {
   ) async {
     try {
       await new_Branch_Data_Reference_RM
-          .child(idnum)
+          .child(location)
           .set({
             'branchID': idnum,
             'branchLocation': location,

@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 class Deletebranchdata{
 
   
-    FirebaseDatabase _dt = FirebaseDatabase.instance;
+    final FirebaseDatabase _dt = FirebaseDatabase.instance;
     //DatabaseReference new_Branch_Data_Reference = FirebaseDatabase.instance.ref().child("branches");
 
 
