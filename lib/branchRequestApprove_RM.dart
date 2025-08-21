@@ -288,7 +288,7 @@ class _Branchrequestapprove_RMState extends State<Branchrequestapprove_RM> {
                                 onPressed: () {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  Deletebranchdata().deleteData(branchID);
+                                  Deletebranchdata().deleteData(branchID,"RM_branches");
                                 },
                               ),
                             ],

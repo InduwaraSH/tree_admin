@@ -8,10 +8,10 @@ class Deletebranchdata{
 
 
 
-    Future<void> deleteData(String idnum) async {
+    Future<void> deleteData(String idnum, String branchType) async {
 
         try {
-            await _dt.ref().child("RO_branches").child(idnum).remove();
+            await _dt.ref().child(branchType).child(idnum).remove();
             print('Data deleted successfully');
         } catch (e) {
             print('Error deleting data: $e');

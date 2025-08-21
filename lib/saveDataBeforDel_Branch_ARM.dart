@@ -7,9 +7,13 @@ class Savedatabeforedel_branch_ARM {
       .ref()
       .child("ARM_branch_data_saved");
 
-  DatabaseReference RM_to_ARM_Reference = FirebaseDatabase.instance
+  DatabaseReference RM_to_ARM_Reference = FirebaseDatabase.instance.ref().child(
+    "Connection RM_ARM",
+  );
+
+  DatabaseReference ARM_Details_Reference = FirebaseDatabase.instance
       .ref()
-      .child("Connection RM_ARM");
+      .child("ARM_Details");
 
   Future<void> SaveData(
     String idnum,
@@ -20,15 +24,20 @@ class Savedatabeforedel_branch_ARM {
     try {
       await new_Branch_Data_Reference_ARM
           .child(branchLocation)
-          .set({
-            'branchID': idnum,
-            'branchLocation': branchLocation,
-            'ReleventRMbranch': RelevantRMbranch,
-          }).whenComplete(() => RM_to_ARM_Reference.child(RelevantRMbranch).child(branchLocation).set({
-            'ARM_branchID': idnum,
-            
-          }))
-          .whenComplete(() => Deletebranchdata().deleteData(idnum))
+          .set({"ARM_branchID": idnum})
+          .whenComplete(
+            () => RM_to_ARM_Reference.child(
+              RelevantRMbranch,
+            ).child(branchLocation).set({'ARM_branchID': idnum}),
+          )
+          .whenComplete(() {
+            ARM_Details_Reference.child(idnum).set({
+              'branchID': idnum,
+              'branchLocation': branchLocation,
+              'ReleventRMbranch': RelevantRMbranch,
+            });
+          })
+          .whenComplete(() => Deletebranchdata().deleteData(idnum,"ARM_branches"))
           .whenComplete(() {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

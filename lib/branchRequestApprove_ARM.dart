@@ -14,7 +14,8 @@ class Branchrequestapprove_ARM extends StatefulWidget {
   const Branchrequestapprove_ARM({super.key});
 
   @override
-  State<Branchrequestapprove_ARM> createState() => _Branchrequestapprove_ARMState();
+  State<Branchrequestapprove_ARM> createState() =>
+      _Branchrequestapprove_ARMState();
 }
 
 class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
@@ -122,7 +123,7 @@ class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
                   Row(
                     children: [
                       Text(
-                        "RM Location       ",
+                        "RM Location              ",
                         style: TextStyle(
                           fontSize: 18,
 
@@ -199,7 +200,7 @@ class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
                                 onPressed: () async {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  
+
                                   bool result = await InternetConnection()
                                       .hasInternetAccess;
                                   if (result == false) {
@@ -223,8 +224,7 @@ class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
                                       branchID,
                                       branchLocation,
                                       ReleventRMbranch,
-                                      context
-                                      
+                                      context,
                                     );
                                   }
                                 },
@@ -288,7 +288,10 @@ class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
                                 onPressed: () {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  Deletebranchdata().deleteData(branchID);
+                                  Deletebranchdata().deleteData(
+                                    branchID,
+                                    "ARM_branches",
+                                  );
                                 },
                               ),
                             ],
