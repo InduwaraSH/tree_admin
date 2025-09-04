@@ -6,7 +6,6 @@ import 'package:admin/personRequestApprove.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -19,13 +18,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   final List<String> menuItems = [
     "Dashboard",
-    "Apps",
-    "Pages",
+    "ARM B Request",
+    "RM B Request",
+    "Person Request",
   ];
 
   /// 🔥 Content switcher
   Widget getSelectedContent() {
-     switch (selectedIndex) {
+    switch (selectedIndex) {
       case 0:
         return const DashboardUI();
       case 1:
@@ -112,8 +112,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child: Row(
                                   children: [
                                     AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 300),
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
                                       curve: Curves.easeInOut,
                                       height: 6,
                                       width: 6,
@@ -155,8 +156,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 // Top bar
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 20,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

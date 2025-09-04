@@ -13,7 +13,8 @@ class Branchrequestapprove_RM extends StatefulWidget {
   const Branchrequestapprove_RM({super.key});
 
   @override
-  State<Branchrequestapprove_RM> createState() => _Branchrequestapprove_RMState();
+  State<Branchrequestapprove_RM> createState() =>
+      _Branchrequestapprove_RMState();
 }
 
 class _Branchrequestapprove_RMState extends State<Branchrequestapprove_RM> {
@@ -198,7 +199,7 @@ class _Branchrequestapprove_RMState extends State<Branchrequestapprove_RM> {
                                 onPressed: () async {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  
+
                                   bool result = await InternetConnection()
                                       .hasInternetAccess;
                                   if (result == false) {
@@ -288,7 +289,10 @@ class _Branchrequestapprove_RMState extends State<Branchrequestapprove_RM> {
                                 onPressed: () {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  Deletebranchdata().deleteData(branchID,"RM_branches");
+                                  Deletebranchdata().deleteData(
+                                    branchID,
+                                    "RM_branches",
+                                  );
                                 },
                               ),
                             ],
@@ -314,12 +318,12 @@ class _Branchrequestapprove_RMState extends State<Branchrequestapprove_RM> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Branch Requests',
-          style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     'Branch Requests',
+      //     style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
+      //   ),
+      // ),
       body: FirebaseAnimatedList(
         query: branchRequestDbref,
         itemBuilder:

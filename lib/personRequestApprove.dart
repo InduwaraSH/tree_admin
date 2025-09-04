@@ -220,7 +220,7 @@ class _personrequestState extends State<personrequest> {
                                     jobPosition,
                                     office_location,
                                     mobileNumber,
-                                    personName
+                                    personName,
                                   );
                                 },
                               ),
@@ -309,12 +309,12 @@ class _personrequestState extends State<personrequest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'User Requests',
-          style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     'User Requests',
+      //     style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
+      //   ),
+      // ),
       body: FirebaseAnimatedList(
         query: personRequestDbref,
         itemBuilder:

@@ -317,12 +317,12 @@ class _Branchrequestapprove_ARMState extends State<Branchrequestapprove_ARM> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Branch Requests',
-          style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     'Branch Requests',
+      //     style: TextStyle(fontFamily: 'sfpro', fontWeight: FontWeight.bold),
+      //   ),
+      // ),
       body: FirebaseAnimatedList(
         query: branchRequestDbref,
         itemBuilder:
