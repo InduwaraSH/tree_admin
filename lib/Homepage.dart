@@ -2,9 +2,14 @@ import 'dart:ui';
 import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/dashboardui.dart';
+import 'package:admin/firebase_options.dart';
 import 'package:admin/personRequestApprove.dart';
+import 'package:admin/person_reg_new.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -34,7 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return const Branchrequestapprove_RM();
 
       case 3:
-        return const personrequest();
+        return const personrequest_new();
       default:
         return const Center(child: Text("Page Not Found"));
     }
@@ -70,7 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Text(
-                          "Minia",
+                          "Timber Corpation",
                           style: GoogleFonts.poppins(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
