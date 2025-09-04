@@ -3,6 +3,7 @@ import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/enter_detail.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/personRequestApprove.dart';
+import 'package:admin/t.dart';
 import 'package:admin/test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home Page')),
+      appBar: AppBar(title: Text('Homev Page')),
       body: Center(
         child: Column(
           children: [
@@ -56,7 +57,7 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const personrequest(),
+                    builder: (context) => const DashboardScreen(),
                   ),
                 );
               },
