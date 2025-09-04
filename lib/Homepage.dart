@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:admin/ARM_branch_Reg.dart';
+import 'package:admin/RM_branch_Reg.dart';
 import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/dashboardui.dart';
@@ -34,9 +36,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 0:
         return const DashboardUI();
       case 1:
-        return const Branchrequestapprove_ARM();
+        return const Branchrequestapprove_ARM_new();
       case 2:
-        return const Branchrequestapprove_RM();
+        return const Branchrequestapprove_RM_new();
 
       case 3:
         return const personrequest_new();
