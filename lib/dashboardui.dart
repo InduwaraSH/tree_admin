@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,6 +13,46 @@ class DashboardUI extends StatefulWidget {
 class _DashboardUIState extends State<DashboardUI> {
   int? hoveredIndex;
 
+  // Firebase reference
+  final DatabaseReference dbRef = FirebaseDatabase.instance.ref().child(
+    "Ongoing_Count",
+  );
+
+  Map<String, int> cityOngoing = {};
+  int totalOngoing = 0;
+  late Stream<DatabaseEvent> _ongoingStream;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen to realtime changes
+    _ongoingStream = dbRef.onValue;
+    _ongoingStream.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.exists) {
+        Map<String, dynamic> data = Map<String, dynamic>.from(
+          snapshot.value as Map,
+        );
+        int total = 0;
+        Map<String, int> temp = {};
+
+        data.forEach((city, values) {
+          int ongoing = 0;
+          if (values is Map && values["ongoing"] != null) {
+            ongoing = values["ongoing"];
+          }
+          temp[city] = ongoing;
+          total += ongoing;
+        });
+
+        setState(() {
+          cityOngoing = temp;
+          totalOngoing = total;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -19,16 +60,15 @@ class _DashboardUIState extends State<DashboardUI> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Top Stats Cards with hover effect
+          // Top Stats Cards
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(4, (index) {
               final cardData = [
                 {
-                  "title": "My Wallet",
-                  "value": "\$865.2k",
-                  "change": "+20.9k",
-                  "icon": Icons.account_balance_wallet,
+                  "title": "Ongoing Tasks",
+                  "value": totalOngoing.toString(),
+                  "icon": Icons.autorenew_rounded,
                   "gradient": const LinearGradient(
                     colors: [Color(0xFF6D5DF6), Color(0xFF8E7CFF)],
                     begin: Alignment.topLeft,
@@ -38,7 +78,6 @@ class _DashboardUIState extends State<DashboardUI> {
                 {
                   "title": "Number of Trades",
                   "value": "6258",
-                  "change": "-29 Trades",
                   "icon": Icons.swap_vert,
                   "negative": true,
                   "gradient": const LinearGradient(
@@ -50,7 +89,6 @@ class _DashboardUIState extends State<DashboardUI> {
                 {
                   "title": "Invested Amount",
                   "value": "\$4.32M",
-                  "change": "+2.8k",
                   "icon": Icons.trending_up,
                   "gradient": const LinearGradient(
                     colors: [Color(0xFF00C9A7), Color(0xFF92FE9D)],
@@ -61,7 +99,6 @@ class _DashboardUIState extends State<DashboardUI> {
                 {
                   "title": "Profit Ratio",
                   "value": "12.57%",
-                  "change": "+2.95%",
                   "icon": Icons.pie_chart,
                   "gradient": const LinearGradient(
                     colors: [Color(0xFFFFA751), Color(0xFFFFD452)],
@@ -78,7 +115,6 @@ class _DashboardUIState extends State<DashboardUI> {
                   child: DashboardCard(
                     title: data["title"] as String,
                     value: data["value"] as String,
-                    change: data["change"] as String,
                     negative: data["negative"] as bool? ?? false,
                     icon: data["icon"] as IconData,
                     gradient: data["gradient"] as Gradient,
@@ -100,30 +136,10 @@ class _DashboardUIState extends State<DashboardUI> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 4,
-                  child: SizedBox(
-                    height: 220,
-                    child: Center(
-                      child: Text(
-                        "Wallet Balance Chart Placeholder",
-                        style: GoogleFonts.poppins(color: Colors.grey[600]),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              Expanded(child: CityOngoingCard(cityOngoing: cityOngoing)),
               const SizedBox(width: 16),
               Expanded(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 4,
+                child: HoverCard(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -153,12 +169,12 @@ class _DashboardUIState extends State<DashboardUI> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Card(
-                  color: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                child: HoverCard(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6D5DF6), Color(0xFF8E7CFF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  elevation: 6,
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -190,11 +206,10 @@ class _DashboardUIState extends State<DashboardUI> {
   }
 }
 
-/// DashboardCard widget (with animation)
+/// DashboardCard widget
 class DashboardCard extends StatelessWidget {
   final String title;
   final String value;
-  final String change;
   final bool negative;
   final IconData icon;
   final Gradient gradient;
@@ -206,7 +221,6 @@ class DashboardCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
-    required this.change,
     this.negative = false,
     required this.icon,
     required this.gradient,
@@ -218,7 +232,7 @@ class DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget cardContent = AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 900),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
         gradient: gradient,
@@ -254,14 +268,6 @@ class DashboardCard extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              change,
-              style: GoogleFonts.poppins(
-                color: negative ? Colors.red[200] : Colors.greenAccent[100],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           ],
         ),
       ),
@@ -269,7 +275,7 @@ class DashboardCard extends StatelessWidget {
 
     cardContent = AnimatedScale(
       scale: isFocused ? 1.08 : 1.0,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 700),
       curve: Curves.easeOutCubic,
       child: cardContent,
     );
@@ -277,7 +283,7 @@ class DashboardCard extends StatelessWidget {
     if (isBlurred) {
       cardContent = TweenAnimationBuilder<double>(
         tween: Tween<double>(begin: 0, end: 3),
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 700),
         curve: Curves.easeOutCubic,
         builder: (context, value, child) {
           return ClipRRect(
@@ -296,6 +302,137 @@ class DashboardCard extends StatelessWidget {
       onEnter: (_) => onHover(true),
       onExit: (_) => onHover(false),
       child: cardContent,
+    );
+  }
+}
+
+/// City Ongoing Card
+class CityOngoingCard extends StatefulWidget {
+  final Map<String, int> cityOngoing;
+  const CityOngoingCard({super.key, required this.cityOngoing});
+
+  @override
+  State<CityOngoingCard> createState() => _CityOngoingCardState();
+}
+
+class _CityOngoingCardState extends State<CityOngoingCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.03 : 1.0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: isHovered ? 25 : 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: widget.cityOngoing.length,
+              itemBuilder: (context, index) {
+                String city = widget.cityOngoing.keys.elementAt(index);
+                int ongoing = widget.cityOngoing[city]!;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        city,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          ongoing.toString(),
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Hoverable Card
+class HoverCard extends StatefulWidget {
+  final Widget child;
+  final Gradient? gradient;
+
+  const HoverCard({super.key, required this.child, this.gradient});
+
+  @override
+  State<HoverCard> createState() => _HoverCardState();
+}
+
+class _HoverCardState extends State<HoverCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.03 : 1.0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          decoration: BoxDecoration(
+            gradient: widget.gradient,
+            color: widget.gradient == null ? Colors.white : null,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: isHovered ? 25 : 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: widget.child,
+        ),
+      ),
     );
   }
 }

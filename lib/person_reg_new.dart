@@ -34,7 +34,6 @@ class _personrequest_newState extends State<personrequest_new> {
       child: AnimatedContainer(
         duration: Duration(milliseconds: 250),
         curve: Curves.easeOut,
-
         transform: Matrix4.identity()..scale(isHovered ? 1.01 : 0.99),
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 13),
         decoration: BoxDecoration(
@@ -234,25 +233,10 @@ class _personrequest_newState extends State<personrequest_new> {
     required Color color,
     required VoidCallback onPressed,
   }) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: color, width: 1.5),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'sfpro',
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ),
+    return _HoverButton(
+      label: label,
+      color: color,
+      onPressed: onPressed,
     );
   }
 
@@ -269,16 +253,66 @@ class _personrequest_newState extends State<personrequest_new> {
               Animation<double> animation,
               int index,
             ) {
-              if (datasnapshot.value != null) {
-                Map request = Map<String, dynamic>.from(
-                  datasnapshot.value as Map,
-                );
-                request['key'] = datasnapshot.key;
-                return requestItem(request: request);
-              } else {
-                return SizedBox();
-              }
-            },
+          if (datasnapshot.value != null) {
+            Map request = Map<String, dynamic>.from(
+              datasnapshot.value as Map,
+            );
+            request['key'] = datasnapshot.key;
+            return requestItem(request: request);
+          } else {
+            return SizedBox();
+          }
+        },
+      ),
+    );
+  }
+}
+
+/// Independent hoverable button widget
+class _HoverButton extends StatefulWidget {
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  const _HoverButton({
+    Key? key,
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  State<_HoverButton> createState() => _HoverButtonState();
+}
+
+class _HoverButtonState extends State<_HoverButton> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            color: isHovered ? widget.color : widget.color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: widget.color, width: 1.5),
+          ),
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              fontFamily: 'sfpro',
+              fontWeight: FontWeight.bold,
+              color: isHovered ? Colors.white : widget.color,
+            ),
+          ),
+        ),
       ),
     );
   }

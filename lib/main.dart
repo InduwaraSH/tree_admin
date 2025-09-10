@@ -1,13 +1,11 @@
 import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
-import 'package:admin/enter_detail.dart';
+
 import 'package:admin/firebase_options.dart';
-import 'package:admin/personRequestApprove.dart';
 import 'package:admin/Homepage.dart';
 import 'package:admin/test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,6 +85,18 @@ class MyHomePage extends StatelessWidget {
               },
               child: const Text('Show ARM Branch Requests'),
             ),
+            SizedBox(height: 20),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const OngoingCountPage(),
+            //       ),
+            //     );
+            //   },
+            //   child: const Text('Show Count Ongoing'),
+            // ),
           ],
         ),
       ),
