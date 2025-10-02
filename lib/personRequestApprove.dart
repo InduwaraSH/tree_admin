@@ -212,16 +212,20 @@ class _personrequestState extends State<personrequest> {
                                 onPressed: () async {
                                   // Add your confirm logic here
                                   Navigator.of(dialogContext).pop();
-                                  AuthReg().registerUser(
-                                    context,
-                                    "$personId@gmail.com",
-                                    personPassword,
-                                    personId,
-                                    jobPosition,
-                                    office_location,
-                                    mobileNumber,
-                                    personName,
-                                  );
+                                  if (jobPosition == "EMP") {
+                                    print("a");
+                                  } else {
+                                    AuthReg().registerUser(
+                                      context,
+                                      "$personId@gmail.com",
+                                      personPassword,
+                                      personId,
+                                      jobPosition,
+                                      office_location,
+                                      mobileNumber,
+                                      personName,
+                                    );
+                                  }
                                 },
                               ),
                             ],

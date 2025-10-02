@@ -1,4 +1,5 @@
 import 'package:admin/deleteRTdata.dart';
+import 'package:admin/emp_reg.dart';
 import 'package:admin/registration.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -126,17 +127,33 @@ class _personrequest_newState extends State<personrequest_new> {
                                 style: TextStyle(color: Colors.green),
                               ),
                               onPressed: () async {
+                                // Add your confirm logic here
                                 Navigator.of(dialogContext).pop();
-                                AuthReg().registerUser(
-                                  context,
-                                  "$personId@gmail.com",
-                                  personPassword,
-                                  personId,
-                                  jobPosition,
-                                  office_location,
-                                  mobileNumber,
-                                  personName,
-                                );
+                                if (jobPosition == "CO") {
+                                  print("new");
+                                  AuthReg_EMP_ONLY().registerUser(
+                                    context,
+                                    "$personId@gmail.com",
+                                    personPassword,
+                                    personId,
+                                    jobPosition,
+                                    office_location,
+                                    mobileNumber,
+                                    personName,
+                                  );
+                                } else {
+                                  print(jobPosition);
+                                  AuthReg().registerUser(
+                                    context,
+                                    "$personId@gmail.com",
+                                    personPassword,
+                                    personId,
+                                    jobPosition,
+                                    office_location,
+                                    mobileNumber,
+                                    personName,
+                                  );
+                                }
                               },
                             ),
                           ],
@@ -233,11 +250,7 @@ class _personrequest_newState extends State<personrequest_new> {
     required Color color,
     required VoidCallback onPressed,
   }) {
-    return _HoverButton(
-      label: label,
-      color: color,
-      onPressed: onPressed,
-    );
+    return _HoverButton(label: label, color: color, onPressed: onPressed);
   }
 
   @override
@@ -253,16 +266,16 @@ class _personrequest_newState extends State<personrequest_new> {
               Animation<double> animation,
               int index,
             ) {
-          if (datasnapshot.value != null) {
-            Map request = Map<String, dynamic>.from(
-              datasnapshot.value as Map,
-            );
-            request['key'] = datasnapshot.key;
-            return requestItem(request: request);
-          } else {
-            return SizedBox();
-          }
-        },
+              if (datasnapshot.value != null) {
+                Map request = Map<String, dynamic>.from(
+                  datasnapshot.value as Map,
+                );
+                request['key'] = datasnapshot.key;
+                return requestItem(request: request);
+              } else {
+                return SizedBox();
+              }
+            },
       ),
     );
   }

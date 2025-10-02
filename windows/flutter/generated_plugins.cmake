@@ -4,8 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
+  file_saver
   firebase_auth
   firebase_core
+  printing
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

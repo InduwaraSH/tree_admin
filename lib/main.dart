@@ -1,8 +1,8 @@
 import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
-
 import 'package:admin/firebase_options.dart';
 import 'package:admin/Homepage.dart';
+import 'package:admin/pdf.dart';
 import 'package:admin/test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,9 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const test()),
+                  MaterialPageRoute(
+                    builder: (context) => const PdfSaveExample(),
+                  ),
                 );
               },
               child: const Text('Update Bus Time Table'),
