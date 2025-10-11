@@ -1,9 +1,8 @@
-import 'package:admin/job_detail.dart'; // Make sure this import path is correct
+import 'package:admin/job_detail.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
-// Your Job data model (no changes needed here)
 class Job {
   final String serialNum;
   final String city;
@@ -31,7 +30,6 @@ class Job {
   }
 }
 
-// Main page widget
 class AllJobsPage extends StatefulWidget {
   const AllJobsPage({super.key});
 
@@ -43,15 +41,12 @@ class _AllJobsPageState extends State<AllJobsPage> {
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref(
     'Status_of_job',
   );
-
-  // ✅ --- ADDITIONS FOR SEARCH FUNCTIONALITY --- ✅
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    // Listener to update the search query state in real-time
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text;
@@ -65,7 +60,6 @@ class _AllJobsPageState extends State<AllJobsPage> {
     super.dispose();
   }
 
-  // Moved this helper here to be accessible for filtering
   String getFriendlyStatus(String statusKey) {
     const statusMap = {
       'RM_R_D_One': 'RM Received',
@@ -80,132 +74,149 @@ class _AllJobsPageState extends State<AllJobsPage> {
     };
     return statusMap[statusKey] ?? statusKey;
   }
-  // ✅ --- END OF SEARCH ADDITIONS --- ✅
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8F7FD),
-      body: Column(
-        children: [
-          // ✅ --- SEARCH BAR UI --- ✅
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by location, city, or status...',
-                prefixIcon: const Icon(Iconsax.search_normal_1, size: 20),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Iconsax.close_circle, size: 20),
-                        onPressed: () {
-                          _searchController.clear();
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
+      backgroundColor: const Color(0xFFF7F9FB),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 🔍 Modern Search Bar
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(
-                    color: Colors.green.shade400,
-                    width: 1.5,
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(fontSize: 15),
+                  decoration: InputDecoration(
+                    hintText: 'Search by location, city, or status...',
+                    prefixIcon: const Icon(
+                      Iconsax.search_normal_1,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(
+                              Iconsax.close_circle,
+                              size: 20,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () => _searchController.clear(),
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
               ),
             ),
-          ),
-          // ✅ --- LIST WRAPPED IN EXPANDED --- ✅
-          Expanded(
-            child: StreamBuilder(
-              stream: _databaseRef.onValue,
-              builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                if (!snapshot.hasData ||
-                    snapshot.data!.snapshot.value == null) {
-                  return const Center(child: Text('No jobs found.'));
-                }
 
-                final List<Job> allJobs = [];
-                final allCities = Map<String, dynamic>.from(
-                  snapshot.data!.snapshot.value as Map,
-                );
-
-                allCities.forEach((cityName, cityJobs) {
-                  final jobsMap = Map<String, dynamic>.from(cityJobs as Map);
-                  jobsMap.forEach((serialNum, jobData) {
-                    allJobs.add(
-                      Job.fromMap(
-                        serialNum,
-                        cityName,
-                        Map<String, dynamic>.from(jobData as Map),
+            // 🔄 Main content
+            Expanded(
+              child: StreamBuilder(
+                stream: _databaseRef.onValue,
+                builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF0A7AFE),
                       ),
                     );
-                  });
-                });
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (!snapshot.hasData ||
+                      snapshot.data!.snapshot.value == null) {
+                    return const Center(child: Text('No jobs found.'));
+                  }
 
-                // ✅ --- FILTERING LOGIC --- ✅
-                final List<Job> filteredJobs = _searchQuery.isEmpty
-                    ? allJobs
-                    : allJobs.where((job) {
-                        final query = _searchQuery.toLowerCase();
-                        final status = getFriendlyStatus(
-                          job.status,
-                        ).toLowerCase();
-
-                        return job.location.toLowerCase().contains(query) ||
-                            job.city.toLowerCase().contains(query) ||
-                            status.contains(query);
-                      }).toList();
-
-                if (filteredJobs.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No results found.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                  final List<Job> allJobs = [];
+                  final allCities = Map<String, dynamic>.from(
+                    snapshot.data!.snapshot.value as Map,
                   );
-                }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.only(top: 8),
-                  itemCount: filteredJobs.length,
-                  itemBuilder: (context, index) {
-                    final job = filteredJobs[index];
-                    return JobCard(
-                      job: job,
-                      getFriendlyStatus:
-                          getFriendlyStatus, // Pass helper function
-                    );
-                  },
-                );
-              },
+                  allCities.forEach((cityName, cityJobs) {
+                    final jobsMap = Map<String, dynamic>.from(cityJobs as Map);
+                    jobsMap.forEach((serialNum, jobData) {
+                      allJobs.add(
+                        Job.fromMap(
+                          serialNum,
+                          cityName,
+                          Map<String, dynamic>.from(jobData as Map),
+                        ),
+                      );
+                    });
+                  });
+
+                  final List<Job> filteredJobs = _searchQuery.isEmpty
+                      ? allJobs
+                      : allJobs.where((job) {
+                          final query = _searchQuery.toLowerCase();
+                          final status = getFriendlyStatus(
+                            job.status,
+                          ).toLowerCase();
+                          return job.location.toLowerCase().contains(query) ||
+                              job.city.toLowerCase().contains(query) ||
+                              status.contains(query);
+                        }).toList();
+
+                  return Column(
+                    children: [
+                      JobStatsRow(jobs: filteredJobs),
+                      Expanded(
+                        child: filteredJobs.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  'No results found.',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                itemCount: filteredJobs.length,
+                                itemBuilder: (context, index) {
+                                  final job = filteredJobs[index];
+                                  return JobCard(
+                                    job: job,
+                                    getFriendlyStatus: getFriendlyStatus,
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
+// 🌐 Job Card - modern, minimal, and elegant
 class JobCard extends StatefulWidget {
   final Job job;
-  // ✅ --- ADDED HELPER FUNCTION PARAMETER --- ✅
   final String Function(String) getFriendlyStatus;
 
   const JobCard({
@@ -219,97 +230,96 @@ class JobCard extends StatefulWidget {
 }
 
 class _JobCardState extends State<JobCard> {
-  bool _isHovered = false;
+  bool _hover = false;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => JobDetailsPage(
-                branchName: widget.job.city,
-                serialNum: widget.job.serialNum,
-              ),
-            ),
-          );
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-          transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
-          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: _isHovered
-                    ? Colors.green.withOpacity(0.2)
-                    : Colors.black.withOpacity(0.06),
-                blurRadius: _isHovered ? 20 : 10,
-                offset: const Offset(0, 8),
-              ),
-            ],
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: _hover
+                ? const Color(0xFF0A7AFE).withOpacity(0.2)
+                : Colors.grey.shade200,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: _hover
+                  ? Colors.blue.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.03),
+              blurRadius: _hover ? 18 : 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => JobDetailsPage(
+                  branchName: widget.job.city,
+                  serialNum: widget.job.serialNum,
+                ),
+              ),
+            );
+          },
           child: Row(
             children: [
+              Container(
+                height: 46,
+                width: 46,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0A7AFE).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Iconsax.document_text,
+                  color: Color(0xFF0A7AFE),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      widget.job.serialNum,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 22,
-                          backgroundColor: Colors.green.shade50,
-                          child: Icon(
-                            Iconsax.document_text,
-                            color: Colors.green.shade700,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Flexible(
-                          child: Text(
-                            widget.job.serialNum,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        _InfoChip(Iconsax.location, widget.job.location),
+                        const SizedBox(width: 8),
+                        _InfoChip(Iconsax.buildings, widget.job.city),
+                        const SizedBox(width: 8),
+                        _InfoChip(
+                          Iconsax.activity,
+                          widget.getFriendlyStatus(widget.job.status),
+                          color: const Color(0xFF0A7AFE),
                         ),
                       ],
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: Divider(height: 1),
-                    ),
-                    _JobInfoRow('Location:', widget.job.location),
-                    _JobInfoRow('City:', widget.job.city),
-                    _JobInfoRow(
-                      'Status:',
-                      // ✅ --- USE THE PASSED-IN FUNCTION --- ✅
-                      widget.getFriendlyStatus(widget.job.status),
-                      statusColor: Colors.green.shade800,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 20),
-              Icon(
-                Iconsax.arrow_right_3,
-                color: _isHovered ? Colors.green : Colors.grey.shade300,
-                size: 28,
-              ),
+              const Icon(Iconsax.arrow_right_3, size: 22, color: Colors.grey),
             ],
           ),
         ),
@@ -317,28 +327,166 @@ class _JobCardState extends State<JobCard> {
     );
   }
 
-  Widget _JobInfoRow(String label, String value, {Color? statusColor}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+  Widget _InfoChip(IconData icon, String text, {Color color = Colors.grey}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade600),
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: color,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: statusColor ?? Colors.black87,
-              ),
+        ],
+      ),
+    );
+  }
+}
+
+// 📊 Stats Row - sleek and uniform layout
+class JobStatsRow extends StatelessWidget {
+  final List<Job> jobs;
+  const JobStatsRow({super.key, required this.jobs});
+
+  @override
+  Widget build(BuildContext context) {
+    final totalCount = jobs.length;
+
+    final statusMetrics = [
+      {
+        'statusKey': 'ARM_R_D_One',
+        'color': Colors.orange,
+        'title': 'ARM Received',
+      },
+      {
+        'statusKey': 'CO_R_D_One',
+        'color': Colors.purple,
+        'title': 'CO Received',
+      },
+      {'statusKey': 'ARM_R_D_two', 'color': Colors.teal, 'title': 'ARM 2nd'},
+      {'statusKey': 'RM_R_D_two', 'color': Colors.cyan, 'title': 'RM 2nd'},
+      {'statusKey': 'approved', 'color': Colors.green, 'title': 'Approved'},
+      {'statusKey': 'procurement', 'color': Colors.red, 'title': 'Procurement'},
+      {
+        'statusKey': 'tree_removal',
+        'color': Colors.brown,
+        'title': 'Tree Removal',
+      },
+    ];
+
+    return Container(
+      height: 160,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          ActivityCard(
+            title: 'Total Jobs',
+            count: totalCount,
+            total: totalCount,
+            color: const Color(0xFF0A7AFE),
+          ),
+          ...statusMetrics.map((metric) {
+            final count = jobs
+                .where((job) => job.status == metric['statusKey'])
+                .length;
+            return ActivityCard(
+              title: metric['title'] as String,
+              count: count,
+              total: totalCount,
+              color: metric['color'] as Color,
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+// 🧩 Activity Card - clean circular progress & text layout
+class ActivityCard extends StatelessWidget {
+  final String title;
+  final int count;
+  final int total;
+  final Color color;
+
+  const ActivityCard({
+    super.key,
+    required this.title,
+    required this.count,
+    required this.total,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = total > 0 ? count / total : 0.0;
+
+    return Container(
+      width: 140,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: 70,
+            height: 70,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CircularProgressIndicator(
+                  value: 1.0,
+                  strokeWidth: 6,
+                  color: color.withOpacity(0.1),
+                ),
+                CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 6,
+                  strokeCap: StrokeCap.round,
+                  valueColor: AlwaysStoppedAnimation(color),
+                ),
+                Center(
+                  child: Text(
+                    '$count',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
