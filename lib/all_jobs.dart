@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
+/// ---------------- MODEL ----------------
 class Job {
   final String serialNum;
   final String city;
@@ -30,6 +31,7 @@ class Job {
   }
 }
 
+/// ---------------- MAIN PAGE ----------------
 class AllJobsPage extends StatefulWidget {
   const AllJobsPage({super.key});
 
@@ -48,9 +50,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
   void initState() {
     super.initState();
     _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text;
-      });
+      setState(() => _searchQuery = _searchController.text);
     });
   }
 
@@ -82,7 +82,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // 🔍 Modern Search Bar
+            // 🔍 Search Bar
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               child: Container(
@@ -118,13 +118,16 @@ class _AllJobsPageState extends State<AllJobsPage> {
                           )
                         : null,
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 8,
+                    ),
                   ),
                 ),
               ),
             ),
 
-            // 🔄 Main content
+            // 🔄 Stream Content
             Expanded(
               child: StreamBuilder(
                 stream: _databaseRef.onValue,
@@ -214,7 +217,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
   }
 }
 
-// 🌐 Job Card - modern, minimal, and elegant
+/// ---------------- JOB CARD ----------------
 class JobCard extends StatefulWidget {
   final Job job;
   final String Function(String) getFriendlyStatus;
@@ -352,7 +355,7 @@ class _JobCardState extends State<JobCard> {
   }
 }
 
-// 📊 Stats Row - sleek and uniform layout
+/// ---------------- JOB STATS ROW ----------------
 class JobStatsRow extends StatelessWidget {
   final List<Job> jobs;
   const JobStatsRow({super.key, required this.jobs});
@@ -362,30 +365,17 @@ class JobStatsRow extends StatelessWidget {
     final totalCount = jobs.length;
 
     final statusMetrics = [
-      {
-        'statusKey': 'ARM_R_D_One',
-        'color': Colors.orange,
-        'title': 'ARM Received',
-      },
-      {
-        'statusKey': 'CO_R_D_One',
-        'color': Colors.purple,
-        'title': 'CO Received',
-      },
-      {'statusKey': 'ARM_R_D_two', 'color': Colors.teal, 'title': 'ARM 2nd'},
-      {'statusKey': 'RM_R_D_two', 'color': Colors.cyan, 'title': 'RM 2nd'},
-      {'statusKey': 'approved', 'color': Colors.green, 'title': 'Approved'},
-      {'statusKey': 'procurement', 'color': Colors.red, 'title': 'Procurement'},
-      {
-        'statusKey': 'tree_removal',
-        'color': Colors.brown,
-        'title': 'Tree Removal',
-      },
+      {'statusKey': 'ARM_R_D_One', 'title': 'ARM Received'},
+      {'statusKey': 'CO_R_D_One', 'title': 'CO Received'},
+      {'statusKey': 'ARM_R_D_two', 'title': 'ARM 2nd'},
+      {'statusKey': 'RM_R_D_two', 'title': 'RM 2nd'},
+      {'statusKey': 'approved', 'title': 'Approved'},
+      {'statusKey': 'procurement', 'title': 'Procurement'},
+      {'statusKey': 'tree_removal', 'title': 'Tree Removal'},
     ];
 
-    return Container(
-      height: 160,
-      margin: const EdgeInsets.only(bottom: 8),
+    return SizedBox(
+      height: 180,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -404,7 +394,7 @@ class JobStatsRow extends StatelessWidget {
               title: metric['title'] as String,
               count: count,
               total: totalCount,
-              color: metric['color'] as Color,
+              color: Colors.green,
             );
           }),
         ],
@@ -413,7 +403,7 @@ class JobStatsRow extends StatelessWidget {
   }
 }
 
-// 🧩 Activity Card - clean circular progress & text layout
+/// ---------------- ACTIVITY CARD (FIXED UI) ----------------
 class ActivityCard extends StatelessWidget {
   final String title;
   final int count;
@@ -433,60 +423,72 @@ class ActivityCard extends StatelessWidget {
     final progress = total > 0 ? count / total : 0.0;
 
     return Container(
-      width: 140,
+      width: 160,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.black,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
           ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: 70,
-            height: 70,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CircularProgressIndicator(
-                  value: 1.0,
-                  strokeWidth: 6,
-                  color: color.withOpacity(0.1),
-                ),
-                CircularProgressIndicator(
-                  value: progress,
-                  strokeWidth: 6,
-                  strokeCap: StrokeCap.round,
-                  valueColor: AlwaysStoppedAnimation(color),
-                ),
-                Center(
-                  child: Text(
-                    '$count',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+          const SizedBox(height: 4),
+          Text(
+            total == 0 ? 'No data available' : '$count of $total',
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.white.withOpacity(0.7),
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Center(
+            child: SizedBox(
+              width: 55,
+              height: 55,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CircularProgressIndicator(
+                    value: 1.0,
+                    strokeWidth: 6,
+                    color: Colors.grey.shade800,
+                  ),
+                  CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 6,
+                    strokeCap: StrokeCap.round,
+                    valueColor: AlwaysStoppedAnimation(color),
+                  ),
+                  Center(
+                    child: Text(
+                      '${(progress * 100).toInt()}%',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
