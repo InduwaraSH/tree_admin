@@ -24,7 +24,7 @@ class CO_in_ARM {
           .whenComplete(
             () => ARM_to_CO_Reference.child(
               office,
-            ).child(idnum).set({'CO_Name': name}),
+            ).child(idnum).set({'CO_Name': name, 'CO_ID': idnum}),
           )
           .whenComplete(() {
             // ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:admin/ARM_branch_Reg.dart';
 import 'package:admin/RM_branch_Reg.dart';
+import 'package:admin/all_jobs.dart';
 import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/dashboardui.dart';
@@ -10,8 +11,6 @@ import 'package:admin/person_reg_new.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -28,6 +27,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     "ARM B Request",
     "RM B Request",
     "Person Request",
+    "All Jobs",
   ];
 
   /// 🔥 Content switcher
@@ -42,6 +42,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       case 3:
         return const personrequest_new();
+      case 4:
+        return const AllJobsPage();
       default:
         return const Center(child: Text("Page Not Found"));
     }
