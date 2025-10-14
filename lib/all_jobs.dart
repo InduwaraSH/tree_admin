@@ -78,7 +78,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FB),
+      backgroundColor: Color(0xFFF8F7FD),
       body: SafeArea(
         child: Column(
           children: [

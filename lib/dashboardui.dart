@@ -79,19 +79,19 @@ class _DashboardUIState extends State<DashboardUI> {
                       ),
                     },
                     {
-                      "title": "This Year Achievements",
+                      "title": "Completed Jobs",
                       "value": "6258",
                       "icon": Icons.emoji_events,
                       "negative": true,
                       "gradient": const LinearGradient(
-                        colors: [Color(0xFFEE5253), Color(0xFFFF7676)],
+                        colors: [Color(0xFFFFA751), Color(0xFFFFD452)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                     },
                     {
                       "title": "This Year Revenue",
-                      "value": "\$4.32M",
+                      "value": "Rs 4.32M",
                       "icon": Icons.attach_money,
                       "gradient": const LinearGradient(
                         colors: [Color(0xFF00C9A7), Color(0xFF92FE9D)],
@@ -100,11 +100,11 @@ class _DashboardUIState extends State<DashboardUI> {
                       ),
                     },
                     {
-                      "title": "Delay Ratio",
-                      "value": "12.57%",
+                      "title": "Danger Zone",
+                      "value": "5 ",
                       "icon": Icons.timelapse,
                       "gradient": const LinearGradient(
-                        colors: [Color(0xFFFFA751), Color(0xFFFFD452)],
+                        colors: [Color(0xFFEE5253), Color(0xFFFF7676)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -140,129 +140,14 @@ class _DashboardUIState extends State<DashboardUI> {
                 children: [
                   Expanded(child: CityOngoingCard(cityOngoing: cityOngoing)),
                   const SizedBox(width: 16),
+
                   //personrequest_new(),
-                  Container(
-                    height: 200,
-                    width: 300,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 55, 30, 30),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 12,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: personrequest_new(),
-                  ),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: HoverCard(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6D5DF6), Color(0xFF8E7CFF)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Bitcoin News",
-                              style: GoogleFonts.poppins(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Bitcoin prices fell sharply amid the global sell-off...",
-                              style: GoogleFonts.poppins(color: Colors.white70),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 100),
+
               // Bottom Row
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: CityOngoingCard(cityOngoing: cityOngoing)),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: HoverCard(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Invested Overview",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              "Invested Amount: \$6134.39",
-                              style: GoogleFonts.poppins(),
-                            ),
-                            Text(
-                              "Income: \$2632.46",
-                              style: GoogleFonts.poppins(),
-                            ),
-                            Text(
-                              "Expenses: -\$924.38",
-                              style: GoogleFonts.poppins(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: HoverCard(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6D5DF6), Color(0xFF8E7CFF)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Bitcoin News",
-                              style: GoogleFonts.poppins(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Bitcoin prices fell sharply amid the global sell-off...",
-                              style: GoogleFonts.poppins(color: Colors.white70),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 250),
             ],
           ),
         ),
