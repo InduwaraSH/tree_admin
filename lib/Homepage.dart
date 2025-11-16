@@ -5,6 +5,7 @@ import 'package:admin/all_jobs.dart';
 import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/dashboardui.dart';
+import 'package:admin/employee_manage.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/personRequestApprove.dart';
 import 'package:admin/person_reg_new.dart';
@@ -28,6 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     "RM B Request",
     "Person Request",
     "All Jobs",
+    "Emp Manage",
   ];
 
   /// 🔥 Content switcher
@@ -44,6 +46,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return const personrequest_new();
       case 4:
         return const AllJobsPage();
+      case 5:
+        return const Emp_Manage();
       default:
         return const Center(child: Text("Page Not Found"));
     }
