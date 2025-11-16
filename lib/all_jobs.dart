@@ -99,11 +99,15 @@ class _AllJobsPageState extends State<AllJobsPage> {
                 ),
                 child: TextField(
                   controller: _searchController,
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontFamily: "sfproRoundSemiB",
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Search by location, city, or status...',
                     prefixIcon: const Icon(
                       Iconsax.search_normal_1,
+
                       size: 20,
                       color: Colors.grey,
                     ),
@@ -188,6 +192,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey,
+                                    fontFamily: "sfproRoundSemiB",
                                   ),
                                 ),
                               )
@@ -301,6 +306,7 @@ class _JobCardState extends State<JobCard> {
                       widget.job.serialNum,
                       style: const TextStyle(
                         fontSize: 17,
+                        fontFamily: "sfproRoundSemiB",
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                       ),
@@ -345,6 +351,7 @@ class _JobCardState extends State<JobCard> {
             text,
             style: TextStyle(
               fontSize: 13,
+              fontFamily: "sfproRoundSemiB",
               fontWeight: FontWeight.w500,
               color: color,
             ),
@@ -394,6 +401,7 @@ class JobStatsRow extends StatelessWidget {
               title: metric['title'] as String,
               count: count,
               total: totalCount,
+
               color: Colors.green,
             );
           }),

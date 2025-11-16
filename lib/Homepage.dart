@@ -84,8 +84,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.all(20),
                         child: Text(
                           "Timber Corpation",
-                          style: GoogleFonts.poppins(
+                          style: TextStyle(
                             fontSize: 24,
+                            fontFamily: "sfproRoundSemiB",
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -141,11 +142,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     Text(
                                       menuItems[index],
-                                      style: GoogleFonts.poppins(
+                                      style: TextStyle(
                                         color: isActive
                                             ? Colors.white
                                             : Colors.white.withOpacity(0.85),
                                         fontSize: 16,
+                                        fontFamily: "sfproRoundSemiB",
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -191,9 +193,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Text(
                           menuItems[selectedIndex],
                           key: ValueKey<int>(selectedIndex),
-                          style: GoogleFonts.poppins(
+                          style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
+                            fontFamily: "sfproRoundSemiB",
                             color: Colors.black87,
                           ),
                         ),

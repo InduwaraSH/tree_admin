@@ -74,8 +74,7 @@ class _personrequestState extends State<personrequest> {
                           (personName),
                           style: TextStyle(
                             fontSize: 20,
-
-                            fontFamily: 'sfpro',
+                            fontFamily: "sfproRoundSemiB",
                             color: Colors.white,
                           ),
                         ),
@@ -90,13 +89,16 @@ class _personrequestState extends State<personrequest> {
                         style: TextStyle(
                           fontSize: 18,
 
-                          fontFamily: 'sfpro',
+                          fontFamily: "sfproRoundSemiB",
                           fontStyle: FontStyle.italic,
                         ),
                       ),
                       Text(
                         ":   $personId",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "sfproRoundSemiB",
+                        ),
                       ),
                     ],
                   ),
@@ -106,13 +108,16 @@ class _personrequestState extends State<personrequest> {
                         "Password                 ",
                         style: TextStyle(
                           fontSize: 18,
-                          fontFamily: 'sfpro',
+                          fontFamily: "sfproRoundSemiB",
                           fontStyle: FontStyle.italic,
                         ),
                       ),
                       Text(
                         ":   $personPassword",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "sfproRoundSemiB",
+                        ),
                       ),
                     ],
                   ),
@@ -123,13 +128,16 @@ class _personrequestState extends State<personrequest> {
                         style: TextStyle(
                           fontSize: 18,
 
-                          fontFamily: 'sfpro',
+                          fontFamily: "sfproRoundSemiB",
                           fontStyle: FontStyle.italic,
                         ),
                       ),
                       Text(
                         ":   $mobileNumber",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "sfproRoundSemiB",
+                        ),
                       ),
                     ],
                   ),
@@ -141,12 +149,15 @@ class _personrequestState extends State<personrequest> {
                         style: TextStyle(
                           fontSize: 18,
                           fontStyle: FontStyle.italic,
-                          fontFamily: 'sfpro',
+                          fontFamily: "sfproRoundSemiB",
                         ),
                       ),
                       Text(
                         ":   $jobPosition",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "sfproRoundSemiB",
+                        ),
                       ),
                     ],
                   ),
@@ -157,12 +168,15 @@ class _personrequestState extends State<personrequest> {
                         style: TextStyle(
                           fontSize: 18,
                           fontStyle: FontStyle.italic,
-                          fontFamily: 'sfpro',
+                          fontFamily: "sfproRoundSemiB",
                         ),
                       ),
                       Text(
                         ":   $office_location",
-                        style: TextStyle(fontSize: 18, fontFamily: 'sfpro'),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "sfproRoundSemiB",
+                        ),
                       ),
                     ],
                   ),
@@ -180,7 +194,7 @@ class _personrequestState extends State<personrequest> {
                             title: Text(
                               'Confirm Request',
                               style: TextStyle(
-                                fontFamily: 'sfpro',
+                                fontFamily: 'sfproRoundSemiB',
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -192,7 +206,7 @@ class _personrequestState extends State<personrequest> {
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                    fontFamily: 'sfpro',
+                                    fontFamily: 'sfproRoundSemiB',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
@@ -204,7 +218,7 @@ class _personrequestState extends State<personrequest> {
                                 child: Text(
                                   'Confirm',
                                   style: TextStyle(
-                                    fontFamily: 'sfpro',
+                                    fontFamily: 'sfproRoundSemiB',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green,
                                   ),
@@ -238,7 +252,7 @@ class _personrequestState extends State<personrequest> {
                       "Confirm",
                       style: TextStyle(
                         color: Colors.white,
-                        fontFamily: 'sfpro',
+                        fontFamily: 'sfproRoundSemiB',
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -254,7 +268,7 @@ class _personrequestState extends State<personrequest> {
                             title: Text(
                               'Decline Request',
                               style: TextStyle(
-                                fontFamily: 'sfpro',
+                                fontFamily: 'sfproRoundSemiB',
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -266,7 +280,7 @@ class _personrequestState extends State<personrequest> {
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                    fontFamily: 'sfpro',
+                                    fontFamily: 'sfproRoundSemiB',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
@@ -279,7 +293,7 @@ class _personrequestState extends State<personrequest> {
                                 child: Text(
                                   'Decline',
                                   style: TextStyle(
-                                    fontFamily: 'sfpro',
+                                    fontFamily: 'sfproRoundSemiB',
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red,
                                   ),
@@ -298,7 +312,10 @@ class _personrequestState extends State<personrequest> {
                     color: Colors.red,
                     child: Text(
                       "Decline",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: "sfproRoundSemiB",
+                      ),
                     ),
                   ),
                 ],

@@ -72,7 +72,7 @@ class _personrequest_newState extends State<personrequest_new> {
                         personName,
                         style: TextStyle(
                           fontSize: 20,
-                          fontFamily: 'sfpro',
+                          fontFamily: "sfproRoundSemiB",
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
@@ -105,7 +105,7 @@ class _personrequest_newState extends State<personrequest_new> {
                           title: Text(
                             'Confirm Request',
                             style: TextStyle(
-                              fontFamily: 'sfpro',
+                              fontFamily: "sfproRoundSemiB",
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -166,6 +166,7 @@ class _personrequest_newState extends State<personrequest_new> {
                 _actionButton(
                   label: "Decline",
                   color: Colors.red,
+
                   onPressed: () {
                     showCupertinoDialog(
                       context: context,
@@ -174,18 +175,22 @@ class _personrequest_newState extends State<personrequest_new> {
                           title: Text(
                             'Decline Request',
                             style: TextStyle(
-                              fontFamily: 'sfpro',
+                              fontFamily: "sfproRoundSemiB",
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           content: Text(
                             'Are you sure you want to decline $personName\'s request?',
+                            style: TextStyle(fontFamily: "sfproRoundSemiB"),
                           ),
                           actions: [
                             CupertinoDialogAction(
                               child: Text(
                                 "Cancel",
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: "sfproRoundSemiB",
+                                ),
                               ),
                               onPressed: () =>
                                   Navigator.of(dialogContext).pop(),
@@ -193,7 +198,10 @@ class _personrequest_newState extends State<personrequest_new> {
                             CupertinoDialogAction(
                               child: Text(
                                 "Decline",
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontFamily: "sfproRoundSemiB",
+                                ),
                               ),
                               onPressed: () {
                                 Navigator.of(dialogContext).pop();
@@ -223,7 +231,7 @@ class _personrequest_newState extends State<personrequest_new> {
             "$label:",
             style: TextStyle(
               fontSize: 15,
-              fontFamily: 'sfpro',
+              fontFamily: "sfproRoundSemiB",
               color: Colors.grey.shade700,
               fontWeight: FontWeight.w500,
             ),
@@ -234,7 +242,7 @@ class _personrequest_newState extends State<personrequest_new> {
               value,
               style: TextStyle(
                 fontSize: 15,
-                fontFamily: 'sfpro',
+                fontFamily: 'sfproRoundSemiB',
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
               ),
@@ -320,7 +328,7 @@ class _HoverButtonState extends State<_HoverButton> {
           child: Text(
             widget.label,
             style: TextStyle(
-              fontFamily: 'sfpro',
+              fontFamily: 'sfproRoundSemiB',
               fontWeight: FontWeight.bold,
               color: isHovered ? Colors.white : widget.color,
             ),

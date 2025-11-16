@@ -82,6 +82,11 @@ class _Emp_ManageState extends State<Emp_Manage> {
                       style: const TextStyle(fontSize: 15),
                       decoration: InputDecoration(
                         hintText: 'Search by Name, Office, or ID...',
+                        hintStyle: const TextStyle(
+                          fontFamily: "sfproRoundSemiB",
+                          fontSize: 15,
+                          color: Colors.grey,
+                        ),
                         prefixIcon: const Icon(
                           Iconsax.search_normal_1,
                           size: 20,
@@ -155,7 +160,7 @@ class _Emp_ManageState extends State<Emp_Manage> {
                                       size: 24,
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 18),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -164,9 +169,10 @@ class _Emp_ManageState extends State<Emp_Manage> {
                                         Text(
                                           emp["employeeName"] ?? "Unknown",
                                           style: const TextStyle(
-                                            fontSize: 17,
+                                            fontSize: 20,
+                                            fontFamily: "sfproRoundSemiB",
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
+                                            color: Colors.blue,
                                           ),
                                         ),
                                         const SizedBox(height: 6),
@@ -224,6 +230,7 @@ class _Emp_ManageState extends State<Emp_Manage> {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
+              fontFamily: "sfproRoundSemiB",
               color: Colors.grey,
             ),
           ),
@@ -289,6 +296,7 @@ class _Emp_ManageState extends State<Emp_Manage> {
                       "Edit Employee ($empKey)",
                       style: const TextStyle(
                         fontSize: 20,
+                        fontFamily: "sfproRoundSemiB",
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -299,15 +307,19 @@ class _Emp_ManageState extends State<Emp_Manage> {
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8F7FD),
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: Colors.grey.shade200),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 175, 218, 253),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Basic Information",
+                          "Change Employee Details",
                           style: TextStyle(
                             fontSize: 15,
+                            fontFamily: "sfproRoundSemiB",
+                            color: Colors.blue,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -350,7 +362,11 @@ class _Emp_ManageState extends State<Emp_Manage> {
                       },
                       child: const Text(
                         "Save Changes",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontFamily: "sfproRoundSemiB",
+                        ),
                       ),
                     ),
                   ),
@@ -419,7 +435,11 @@ class _Emp_ManageState extends State<Emp_Manage> {
           icon: const Icon(Icons.keyboard_arrow_down),
           iconSize: 28,
           elevation: 2,
-          style: const TextStyle(color: Colors.black87, fontSize: 15),
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 15,
+            fontFamily: "sfproRoundSemiB",
+          ),
           borderRadius: BorderRadius.circular(20),
           dropdownColor: Colors.white,
           onChanged: onChanged,
