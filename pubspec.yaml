@@ -88,6 +88,19 @@ flutter:
     - family: sfpro
       fonts:
         - asset: fonts/sfpro.ttf
+
+    - family: sfproRoundSemiB
+      fonts:
+        - asset: fonts/sfproRoundSemiB.ttf
+
+    - family: sfProDisplaySemioB
+      fonts:
+        - asset: fonts/sfProDisplaySemioB.otf
+
+    - family: sfproRoundRegular
+      fonts:
+        - asset: fonts/sfproRoundRegular.ttf
+
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
