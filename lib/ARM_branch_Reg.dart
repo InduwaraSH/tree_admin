@@ -264,16 +264,16 @@ class _Branchrequestapprove_ARM_newState
               Animation<double> animation,
               int index,
             ) {
-          if (datasnapshot.value != null) {
-            Map request = Map<String, dynamic>.from(
-              datasnapshot.value as Map,
-            );
-            request['key'] = datasnapshot.key;
-            return requestItem(request: request);
-          } else {
-            return const SizedBox();
-          }
-        },
+              if (datasnapshot.value != null) {
+                Map request = Map<String, dynamic>.from(
+                  datasnapshot.value as Map,
+                );
+                request['key'] = datasnapshot.key;
+                return requestItem(request: request);
+              } else {
+                return const SizedBox();
+              }
+            },
       ),
     );
   }

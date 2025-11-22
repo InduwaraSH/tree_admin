@@ -1,7 +1,6 @@
 import 'package:admin/job_detail.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 
 /// ---------------- MODEL ----------------
 class Job {
@@ -106,7 +105,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
                   decoration: InputDecoration(
                     hintText: 'Search by location, city, or status...',
                     prefixIcon: const Icon(
-                      Iconsax.search_normal_1,
+                      Icons.done,
 
                       size: 20,
                       color: Colors.grey,
@@ -114,7 +113,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(
-                              Iconsax.close_circle,
+                              Icons.import_contacts,
                               size: 20,
                               color: Colors.grey,
                             ),
@@ -292,7 +291,7 @@ class _JobCardState extends State<JobCard> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
-                  Iconsax.document_text,
+                  Icons.done,
                   color: Color(0xFF0A7AFE),
                   size: 24,
                 ),
@@ -314,12 +313,12 @@ class _JobCardState extends State<JobCard> {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        _InfoChip(Iconsax.location, widget.job.location),
+                        _InfoChip(Icons.done, widget.job.location),
                         const SizedBox(width: 8),
-                        _InfoChip(Iconsax.buildings, widget.job.city),
+                        _InfoChip(Icons.done, widget.job.city),
                         const SizedBox(width: 8),
                         _InfoChip(
-                          Iconsax.activity,
+                          Icons.done,
                           widget.getFriendlyStatus(widget.job.status),
                           color: const Color(0xFF0A7AFE),
                         ),
@@ -328,7 +327,7 @@ class _JobCardState extends State<JobCard> {
                   ],
                 ),
               ),
-              const Icon(Iconsax.arrow_right_3, size: 22, color: Colors.grey),
+              const Icon(Icons.done, size: 22, color: Colors.grey),
             ],
           ),
         ),

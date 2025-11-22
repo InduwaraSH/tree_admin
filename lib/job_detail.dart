@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:iconsax/iconsax.dart';
 
 class JobDetailsPage extends StatefulWidget {
   final String branchName;
@@ -142,7 +141,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
         children: [
           Row(
             children: [
-              const Icon(Iconsax.location5, size: 24, color: Colors.green),
+              const Icon(Icons.done, size: 24, color: Colors.green),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -237,7 +236,7 @@ class TimelineStep extends StatelessWidget {
                 else
                   const Spacer(),
                 Icon(
-                  isCompleted ? Iconsax.tick_circle : Iconsax.minus_cirlce,
+                  isCompleted ? Icons.done : Icons.done,
                   color: isCompleted ? Colors.green : Colors.grey.shade400,
                   size: 28,
                 ),

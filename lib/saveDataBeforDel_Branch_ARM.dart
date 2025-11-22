@@ -37,7 +37,9 @@ class Savedatabeforedel_branch_ARM {
               'ReleventRMbranch': RelevantRMbranch,
             });
           })
-          .whenComplete(() => Deletebranchdata().deleteData(idnum,"ARM_branches"))
+          .whenComplete(
+            () => Deletebranchdata().deleteData(idnum, "ARM_branches"),
+          )
           .whenComplete(() {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

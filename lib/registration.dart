@@ -1,7 +1,7 @@
 import 'package:admin/deleteRTdata.dart';
 import 'package:admin/saveDataBeforeDel_Emp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -56,26 +56,27 @@ class AuthReg {
           email: emailAddress,
           password: password,
         );
-        
+
         Savedatabeforedel()
-            .SaveData(IDnum, position, office, mobile,name)
+            .SaveData(IDnum, position, office, mobile, name)
             .whenComplete(() {
               deleteRealtimeData().deleteData(IDnum);
-            }).whenComplete(() {
+            })
+            .whenComplete(() {
               ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'This Account Verification is Completed!',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'sfpro',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            duration: Duration(seconds: 5),
-            backgroundColor: Colors.green,
-          ),
-        );
+                SnackBar(
+                  content: Text(
+                    'This Account Verification is Completed!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'sfpro',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  duration: Duration(seconds: 5),
+                  backgroundColor: Colors.green,
+                ),
+              );
             });
       } on FirebaseAuthException catch (e) {
         print("FirebaseAuthException: ${e.code}");
@@ -117,7 +118,4 @@ class AuthReg {
       }
     }
   }
-
-
-
 }

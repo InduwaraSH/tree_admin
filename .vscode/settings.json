@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/Users/dolee/Music/tree_admin/linux"
+    "cmake.sourceDirectory": "/Users/dolee/Music/tree_admin/linux",
+    "cmake.ignoreCMakeListsMissing": true
 }

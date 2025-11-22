@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:iconsax/iconsax.dart';
 
 class Emp_Manage extends StatefulWidget {
   const Emp_Manage({super.key});
@@ -88,14 +87,14 @@ class _Emp_ManageState extends State<Emp_Manage> {
                           color: Colors.grey,
                         ),
                         prefixIcon: const Icon(
-                          Iconsax.search_normal_1,
+                          Icons.done,
                           size: 20,
                           color: Colors.grey,
                         ),
                         suffixIcon: searchQuery.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(
-                                  Iconsax.close_circle,
+                                  Icons.done,
                                   size: 20,
                                   color: Colors.grey,
                                 ),

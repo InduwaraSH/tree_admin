@@ -44,18 +44,6 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const PdfSaveExample(),
-                  ),
-                );
-              },
-              child: const Text('Update Bus Time Table'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
                     builder: (context) => const DashboardScreen(),
                   ),
                 );
