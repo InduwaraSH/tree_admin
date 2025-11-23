@@ -2,8 +2,8 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:admin/person_reg_new.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dart/firebase_dart.dart' as fb_dart;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,15 +16,15 @@ class DashboardUI extends StatefulWidget {
 
 class _DashboardUIState extends State<DashboardUI> {
   int? hoveredIndex;
-  late FirebaseDatabase database;
-  late DatabaseReference dbRef;
+  late fb_dart.FirebaseDatabase database;
+  late fb_dart.DatabaseReference dbRef;
 
-  // Firebase reference (native FlutterFire types)
+  // Firebase reference (using firebase_dart types)
 
   Map<String, int> cityOngoing = {};
   int totalOngoing = 0;
-  late Stream<DatabaseEvent> _ongoingStream;
-  StreamSubscription<DatabaseEvent>? _ongoingSub;
+  late Stream<dynamic> _ongoingStream;
+  StreamSubscription<dynamic>? _ongoingSub;
 
   @override
   void initState() {
@@ -32,68 +32,48 @@ class _DashboardUIState extends State<DashboardUI> {
     // Initialize DatabaseReference using FlutterFire's firebase_database
     // This assumes you already called Firebase.initializeApp(...) in main.dart
     try {
-      final app = Firebase.app();
+      final app = fb_dart.Firebase.app();
 
-      database = FirebaseDatabase.instanceFor(app: app);
-      dbRef = database.ref().child('Ongoing_Count');
-      _ongoingStream = dbRef.onValue;
-      _ongoingSub = _ongoingStream.listen(
-        (event) {
-          final snapshot = event.snapshot;
-          if (snapshot.exists) {
-            final raw = snapshot.value;
-            // Safely map the dynamic structure returned by the realtime DB
-            Map<String, dynamic> data = {};
-            if (raw is Map) {
-              // The snapshot.value may be Map<dynamic, dynamic>
-              data = Map<String, dynamic>.from(
-                raw.map((k, v) => MapEntry(k.toString(), v)),
-              );
+      // firebase_dart uses a constructor that accepts the Firebase app to create a database instance
+      database = fb_dart.FirebaseDatabase(app: app);
+      dbRef = database.reference().child('Ongoing_Count');
+      _ongoingSub = dbRef.onValue.listen((fb_dart.Event event) {
+        final snapshot = event.snapshot;
+        final raw = snapshot.value;
+
+        if (raw != null && raw is Map) {
+          Map<String, int> temp = {};
+          int total = 0;
+
+          raw.forEach((city, value) {
+            int ongoing = 0;
+
+            if (value is Map && value["ongoing"] != null) {
+              final v = value["ongoing"];
+              if (v is int) ongoing = v;
+              if (v is String) ongoing = int.tryParse(v) ?? 0;
+              if (v is double) ongoing = v.toInt();
             }
 
-            int total = 0;
-            Map<String, int> temp = {};
+            temp[city.toString()] = ongoing;
+            total += ongoing;
+          });
 
-            data.forEach((city, values) {
-              int ongoing = 0;
-              if (values is Map && values["ongoing"] != null) {
-                final v = values["ongoing"];
-                if (v is int) {
-                  ongoing = v;
-                } else if (v is String) {
-                  ongoing = int.tryParse(v) ?? 0;
-                } else if (v is double) {
-                  ongoing = v.toInt();
-                }
-              } else if (values is int) {
-                // if the value itself is an int
-                ongoing = values;
-              }
-              temp[city] = ongoing;
-              total += ongoing;
+          if (mounted) {
+            setState(() {
+              cityOngoing = temp;
+              totalOngoing = total;
             });
-
-            if (mounted) {
-              setState(() {
-                cityOngoing = temp;
-                totalOngoing = total;
-              });
-            }
-          } else {
-            // snapshot doesn't exist -> clear values
-            if (mounted) {
-              setState(() {
-                cityOngoing = {};
-                totalOngoing = 0;
-              });
-            }
           }
-        },
-        onError: (err) {
-          // handle errors silently (or print)
-          // print('DB stream error: $err');
-        },
-      );
+        } else {
+          if (mounted) {
+            setState(() {
+              cityOngoing = {};
+              totalOngoing = 0;
+            });
+          }
+        }
+      });
     } catch (e, st) {
       // If something goes wrong, print error (won't change UI)
       // print('Firebase DB init error: $e\n$st');

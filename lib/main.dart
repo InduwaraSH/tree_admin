@@ -3,7 +3,7 @@ import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/Homepage.dart';
 
-import 'package:firebase_core/firebase_core.dart' as fd;
+import 'package:firebase_dart/firebase_dart.dart' as fd;
 import 'package:firebase_dart_flutter/firebase_dart_flutter.dart';
 import 'package:flutter/material.dart';
 
