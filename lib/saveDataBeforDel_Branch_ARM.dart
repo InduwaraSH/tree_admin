@@ -1,19 +1,22 @@
 import 'package:admin/deleteBranchdata.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 import 'package:flutter/material.dart';
 
 class Savedatabeforedel_branch_ARM {
-  DatabaseReference new_Branch_Data_Reference_ARM = FirebaseDatabase.instance
-      .ref()
-      .child("ARM_branch_data_saved");
+  late DatabaseReference new_Branch_Data_Reference_ARM;
+  late DatabaseReference RM_to_ARM_Reference;
+  late DatabaseReference ARM_Details_Reference;
 
-  DatabaseReference RM_to_ARM_Reference = FirebaseDatabase.instance.ref().child(
-    "Connection RM_ARM",
-  );
+  Savedatabeforedel_branch_ARM() {
+    final app = Firebase.app(); // Make sure Firebase.app() is initialized
+    final db = FirebaseDatabase(app: app);
 
-  DatabaseReference ARM_Details_Reference = FirebaseDatabase.instance
-      .ref()
-      .child("ARM_Details");
+    new_Branch_Data_Reference_ARM = db.reference().child(
+      "ARM_branch_data_saved",
+    );
+    RM_to_ARM_Reference = db.reference().child("Connection RM_ARM");
+    ARM_Details_Reference = db.reference().child("ARM_Details");
+  }
 
   Future<void> SaveData(
     String idnum,
@@ -22,40 +25,41 @@ class Savedatabeforedel_branch_ARM {
     BuildContext context,
   ) async {
     try {
-      await new_Branch_Data_Reference_ARM
-          .child(branchLocation)
-          .set({"ARM_branchID": idnum})
-          .whenComplete(
-            () => RM_to_ARM_Reference.child(
-              RelevantRMbranch,
-            ).child(branchLocation).set({'ARM_branchID': idnum}),
-          )
-          .whenComplete(() {
-            ARM_Details_Reference.child(idnum).set({
-              'branchID': idnum,
-              'branchLocation': branchLocation,
-              'ReleventRMbranch': RelevantRMbranch,
-            });
-          })
-          .whenComplete(
-            () => Deletebranchdata().deleteData(idnum, "ARM_branches"),
-          )
-          .whenComplete(() {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Branch data saved successfully',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'sfpro',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                duration: Duration(seconds: 2),
-                backgroundColor: Colors.black,
-              ),
-            );
-          });
+      // Save in ARM_branch_data_saved
+      await new_Branch_Data_Reference_ARM.child(branchLocation).set({
+        "ARM_branchID": idnum,
+      });
+
+      // Save connection RM -> ARM
+      await RM_to_ARM_Reference.child(
+        RelevantRMbranch,
+      ).child(branchLocation).set({'ARM_branchID': idnum});
+
+      // Save branch details
+      await ARM_Details_Reference.child(idnum).set({
+        'branchID': idnum,
+        'branchLocation': branchLocation,
+        'ReleventRMbranch': RelevantRMbranch,
+      });
+
+      // Delete original request
+      await Deletebranchdata().deleteData(idnum, "ARM_branches");
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Branch data saved successfully',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'sfpro',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.black,
+        ),
+      );
 
       print('Data saved successfully');
     } catch (e) {
@@ -64,13 +68,13 @@ class Savedatabeforedel_branch_ARM {
         SnackBar(
           content: Text(
             'Error saving branch: $e',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontFamily: 'sfpro',
               fontWeight: FontWeight.bold,
             ),
           ),
-          duration: Duration(seconds: 5),
+          duration: const Duration(seconds: 5),
           backgroundColor: Colors.grey,
         ),
       );

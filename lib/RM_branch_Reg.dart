@@ -1,10 +1,12 @@
 import 'package:admin/deleteBranchdata.dart';
 import 'package:admin/saveDataBeforDel_Branch_RM.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+
+// firebase_dart imports
+import 'package:firebase_dart/firebase_dart.dart';
+import 'package:firebase_dart/database.dart';
 
 class Branchrequestapprove_RM_new extends StatefulWidget {
   const Branchrequestapprove_RM_new({super.key});
@@ -16,28 +18,107 @@ class Branchrequestapprove_RM_new extends StatefulWidget {
 
 class _Branchrequestapprove_RM_newState
     extends State<Branchrequestapprove_RM_new> {
-  Query branchRequestDbref = FirebaseDatabase.instance.ref().child(
-    "RM_branches",
-  );
+  late FirebaseDatabase _database;
+  late DatabaseReference _branchRequestRef;
 
-  String? hoveredKey; // Track hovered card
+  @override
+  void initState() {
+    super.initState();
+    // Ensure Firebase.app() is initialized in main() before this page is used.
+    final app = Firebase.app();
+    _database = FirebaseDatabase(app: app);
+    _branchRequestRef = _database.reference().child("RM_branches");
+  }
 
-  Widget requestItem({required Map request}) {
-    final String branchID = request['branchId'] ?? 'No ID';
-    final String branchTP = request['branchTP'] ?? 'No TP';
-    final String branchLocation = request['branchLocation'] ?? 'No Location';
-    final String branchManager = request['branchManager'] ?? 'No Manager';
+  // Helper to normalize raw snapshot value into a Map<String, dynamic>
+  Map<String, dynamic> _asMap(dynamic raw) {
+    if (raw == null) return {};
+    if (raw is Map) {
+      final out = <String, dynamic>{};
+      raw.forEach((k, v) => out[k.toString()] = v);
+      return out;
+    }
+    return {'value': raw};
+  }
 
-    final String cardKey = request['key'];
-    final bool isHovered = hoveredKey == cardKey;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F7FD),
+      body: StreamBuilder<Event>(
+        stream: _branchRequestRef.onValue,
+        builder: (context, AsyncSnapshot<Event> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final raw = snapshot.data?.snapshot.value;
+          if (raw == null) {
+            return const Center(child: Text('No requests found.'));
+          }
+
+          // Convert raw map into a List<Map> preserving keys
+          final List<Map<String, dynamic>> requests = [];
+          if (raw is Map) {
+            raw.forEach((k, v) {
+              final map = _asMap(v);
+              map['key'] = k.toString();
+              requests.add(map);
+            });
+          } else {
+            final map = _asMap(raw);
+            map['key'] = 'unknown';
+            requests.add(map);
+          }
+
+          return ListView.builder(
+            itemCount: requests.length,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            itemBuilder: (context, index) {
+              final request = requests[index];
+              // FIXED: Use the isolated Widget class
+              return RMBranchCard(request: request);
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// FIXED: Extracted Card to separate StatefulWidget to isolate hover state
+class RMBranchCard extends StatefulWidget {
+  final Map request;
+  const RMBranchCard({super.key, required this.request});
+
+  @override
+  State<RMBranchCard> createState() => _RMBranchCardState();
+}
+
+class _RMBranchCardState extends State<RMBranchCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final String branchID = widget.request['branchId'] ?? 'No ID';
+    final String branchTP = widget.request['branchTP'] ?? 'No TP';
+    final String branchLocation =
+        widget.request['branchLocation'] ?? 'No Location';
+    final String branchManager =
+        widget.request['branchManager'] ?? 'No Manager';
 
     return MouseRegion(
-      onEnter: (_) => setState(() => hoveredKey = cardKey),
-      onExit: (_) => setState(() => hoveredKey = null),
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-        transform: Matrix4.identity()..scale(isHovered ? 1.01 : 0.99),
+        // Scale handles strictly within this widget now
+        transformAlignment: Alignment.center,
+        transform: Matrix4.identity()..scale(isHovered ? 1.01 : 1.0),
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -56,7 +137,7 @@ class _Branchrequestapprove_RM_newState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            /// LEFT SECTION (Branch Info)
+            // LEFT SECTION
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +176,9 @@ class _Branchrequestapprove_RM_newState
               ),
             ),
 
-            /// RIGHT SECTION (Buttons)
+            const SizedBox(width: 12),
+
+            // RIGHT SECTION (Buttons)
             Column(
               children: [
                 _HoverButton(
@@ -223,7 +306,6 @@ class _Branchrequestapprove_RM_newState
     );
   }
 
-  /// Row for branch info
   Widget _infoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -251,33 +333,6 @@ class _Branchrequestapprove_RM_newState
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F7FD),
-      body: FirebaseAnimatedList(
-        query: branchRequestDbref,
-        itemBuilder:
-            (
-              BuildContext context,
-              DataSnapshot datasnapshot,
-              Animation<double> animation,
-              int index,
-            ) {
-              if (datasnapshot.value != null) {
-                Map request = Map<String, dynamic>.from(
-                  datasnapshot.value as Map,
-                );
-                request['key'] = datasnapshot.key;
-                return requestItem(request: request);
-              } else {
-                return const SizedBox();
-              }
-            },
       ),
     );
   }
@@ -310,6 +365,8 @@ class _HoverButtonState extends State<_HoverButton> {
       onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
         onTap: widget.onPressed,
+        // Ensure clicks are detected even on text/padding areas
+        behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeInOut,

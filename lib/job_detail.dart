@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dart/firebase_dart.dart';
+import 'package:firebase_dart/database.dart';
 
 class JobDetailsPage extends StatefulWidget {
   final String branchName;
@@ -16,7 +17,8 @@ class JobDetailsPage extends StatefulWidget {
 }
 
 class _JobDetailsPageState extends State<JobDetailsPage> {
-  late final DatabaseReference _jobRef;
+  late FirebaseDatabase _database;
+  late DatabaseReference _jobRef;
 
   final List<String> steps = [
     'RM_R_D_One',
@@ -45,7 +47,12 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _jobRef = FirebaseDatabase.instance.ref(
+    // Initialize firebase_dart database instance
+    final app = Firebase.app();
+    _database = FirebaseDatabase(app: app);
+
+    // Define reference using .reference().child()
+    _jobRef = _database.reference().child(
       'Status_of_job/${widget.branchName}/${widget.serialNum}',
     );
   }
@@ -65,41 +72,47 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
     return jobData[step] ?? '';
   }
 
+  // Helper to safely convert raw data to Map
+  Map<String, dynamic> _asMap(dynamic raw) {
+    if (raw == null) return {};
+    if (raw is Map) {
+      final out = <String, dynamic>{};
+      raw.forEach((k, v) => out[k.toString()] = v);
+      return out;
+    }
+    return {};
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("")),
-      backgroundColor: Color(0xFFF8F7FD),
-      body: StreamBuilder(
+      appBar: AppBar(title: const Text("")),
+      backgroundColor: const Color(0xFFF8F7FD),
+      // Changed Stream type to Event for firebase_dart
+      body: StreamBuilder<Event>(
         stream: _jobRef.onValue,
-        builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+        builder: (context, AsyncSnapshot<Event> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
-          if (!snapshot.hasData || !snapshot.data!.snapshot.exists) {
+          // In firebase_dart, check if value is null
+          if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
             return const Center(child: Text("Details not found for this job."));
           }
 
-          final jobData = Map<String, dynamic>.from(
-            snapshot.data!.snapshot.value as Map,
-          );
+          final rawValue = snapshot.data!.snapshot.value;
+          final jobData = _asMap(rawValue);
           final locationName = jobData['location'] ?? 'Unknown Location';
 
-          // ✅ --- MODIFICATION STARTS HERE --- ✅
-
-          // 1. We wrap the content with a 'Center' widget to center it horizontally.
           return Center(
-            // 2. We use 'ConstrainedBox' to limit the width of the child.
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                // 3. Set the maximum width to 60% of the screen's total width.
                 maxWidth: MediaQuery.of(context).size.width * 0.6,
               ),
               child: SingleChildScrollView(
-                // 4. Add some vertical padding for better spacing.
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,15 +133,12 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
               ),
             ),
           );
-
-          // ✅ --- MODIFICATION ENDS HERE --- ✅
         },
       ),
     );
   }
 
   Widget buildInfoCard(Map<String, dynamic> jobData, String locationName) {
-    // This widget remains unchanged
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
@@ -176,7 +186,6 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
   }
 
   Widget buildTimeline(Map<String, dynamic> jobData) {
-    // This widget remains unchanged
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -198,7 +207,6 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
   }
 }
 
-// This TimelineStep widget remains the same as before
 class TimelineStep extends StatelessWidget {
   final String stepName;
   final String date;

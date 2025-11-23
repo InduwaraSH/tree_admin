@@ -1,10 +1,6 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 
 class Savedatabeforedel {
-  DatabaseReference new_Employee_Data_Reference = FirebaseDatabase.instance
-      .ref()
-      .child("employee_data_saved");
-
   Future<void> SaveData(
     String idnum,
     String position,
@@ -13,6 +9,17 @@ class Savedatabeforedel {
     String name,
   ) async {
     try {
+      // 1. Get the initialized Firebase App
+      final app = Firebase.app();
+
+      // 2. Initialize Database with the app
+      final database = FirebaseDatabase(app: app);
+
+      // 3. Create the reference (using .reference() instead of .ref())
+      final DatabaseReference new_Employee_Data_Reference = database
+          .reference()
+          .child("employee_data_saved");
+
       await new_Employee_Data_Reference.child(idnum).set({
         'employeeName': name,
         'employeePosition': position,

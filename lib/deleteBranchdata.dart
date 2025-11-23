@@ -1,12 +1,18 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 
 class Deletebranchdata {
-  final FirebaseDatabase _dt = FirebaseDatabase.instance;
-  //DatabaseReference new_Branch_Data_Reference = FirebaseDatabase.instance.ref().child("branches");
+  late FirebaseDatabase _dt;
+
+  Deletebranchdata() {
+    // Make sure Firebase.app() is initialized in main()
+    final app = Firebase.app();
+    _dt = FirebaseDatabase(app: app);
+  }
 
   Future<void> deleteData(String idnum, String branchType) async {
     try {
-      await _dt.ref().child(branchType).child(idnum).remove();
+      final ref = _dt.reference().child(branchType).child(idnum);
+      await ref.remove();
       print('Data deleted successfully');
     } catch (e) {
       print('Error deleting data: $e');

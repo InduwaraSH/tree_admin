@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_dart/firebase_dart.dart';
 import 'package:firebase_dart/database.dart';
@@ -18,12 +19,8 @@ class _Emp_ManageState extends State<Emp_Manage> {
   @override
   void initState() {
     super.initState();
-
-    // Firebase app must be initialized in main() first
-    final app = Firebase.app();
+    final app = Firebase.app(); // Must initialize in main() first
     database = FirebaseDatabase(app: app);
-
-    // Path to employee data
     ref = database.reference().child("employee_data_saved");
 
     _searchController.addListener(() {
@@ -47,43 +44,30 @@ class _Emp_ManageState extends State<Emp_Manage> {
     return {'value': raw};
   }
 
-  DataSnapshot? _extractSnapshot(dynamic eventOrSnap) {
-    if (eventOrSnap == null) return null;
-    if (eventOrSnap is Event) return eventOrSnap.snapshot;
-    if (eventOrSnap is DataSnapshot) return eventOrSnap;
-    try {
-      final maybeSnapshot = (eventOrSnap as dynamic).snapshot;
-      if (maybeSnapshot is DataSnapshot) return maybeSnapshot;
-    } catch (_) {}
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<dynamic>(
+      body: StreamBuilder<Event>(
         stream: ref.onValue,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData || snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final ds = _extractSnapshot(snapshot.data);
-          if (ds == null || ds.value == null) {
+          final ds = snapshot.data!.snapshot;
+          if (ds.value == null) {
             return const Center(child: Text("No employees found"));
           }
 
-          final dataRaw = ds.value;
-          final Map<String, dynamic> data = dataRaw is Map
+          final Map<String, dynamic> data = ds.value is Map
               ? Map<String, dynamic>.fromIterables(
-                  dataRaw.keys.map((k) => k.toString()),
-                  dataRaw.values,
+                  (ds.value as Map).keys.map((k) => k.toString()),
+                  (ds.value as Map).values,
                 )
-              : {'item': dataRaw};
+              : {'item': ds.value};
 
           final employeeKeys = data.keys.toList();
 
-          // Filter employees based on searchQuery
           final filteredKeys = employeeKeys.where((key) {
             final emp = _normalize(data[key]);
             final name = emp["employeeName"]?.toString().toLowerCase() ?? "";
@@ -100,7 +84,7 @@ class _Emp_ManageState extends State<Emp_Manage> {
             color: const Color(0xFFF8F7FD),
             child: Column(
               children: [
-                // 🔍 Modern Search Bar
+                // 🔍 Search Bar
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 40, 20, 8),
                   child: Container(
@@ -120,20 +104,15 @@ class _Emp_ManageState extends State<Emp_Manage> {
                       style: const TextStyle(fontSize: 15),
                       decoration: InputDecoration(
                         hintText: 'Search by Name, Office, or ID...',
-                        hintStyle: const TextStyle(
-                          fontFamily: "sfproRoundSemiB",
-                          fontSize: 15,
-                          color: Colors.grey,
-                        ),
                         prefixIcon: const Icon(
-                          Icons.done,
+                          Icons.search,
                           size: 20,
                           color: Colors.grey,
                         ),
                         suffixIcon: searchQuery.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(
-                                  Icons.done,
+                                  Icons.clear,
                                   size: 20,
                                   color: Colors.grey,
                                 ),
@@ -207,7 +186,6 @@ class _Emp_ManageState extends State<Emp_Manage> {
                                           emp["employeeName"] ?? "Unknown",
                                           style: const TextStyle(
                                             fontSize: 20,
-                                            fontFamily: "sfproRoundSemiB",
                                             fontWeight: FontWeight.w600,
                                             color: Colors.blue,
                                           ),
@@ -267,7 +245,6 @@ class _Emp_ManageState extends State<Emp_Manage> {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              fontFamily: "sfproRoundSemiB",
               color: Colors.grey,
             ),
           ),
@@ -276,10 +253,141 @@ class _Emp_ManageState extends State<Emp_Manage> {
     );
   }
 
-  // The openEditSheet and _modernDropdown stay exactly the same
   void openEditSheet(BuildContext context, dynamic empKey, Map empData) {
-    /* unchanged */
+    final officeOptions = ["Embilipitya", "Matara", "Galle", "Head Office"];
+    final positionOptions = ["RM", "ARM", "CO"];
+
+    String selectedOffice = officeOptions.contains(empData["employeeOffice"])
+        ? empData["employeeOffice"]
+        : officeOptions[0];
+    String selectedPosition =
+        positionOptions.contains(empData["employeePosition"])
+        ? empData["employeePosition"]
+        : positionOptions[0];
+
+    bool isDisabled = empData["isDisabled"] == true;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  Text(
+                    "Edit Employee ($empKey)",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  _modernDropdown(
+                    value: selectedOffice,
+                    items: officeOptions,
+                    label: "Employee Office",
+                    onChanged: (val) => setState(() => selectedOffice = val!),
+                  ),
+                  const SizedBox(height: 14),
+                  _modernDropdown(
+                    value: selectedPosition,
+                    items: positionOptions,
+                    label: "Employee Position",
+                    onChanged: (val) => setState(() => selectedPosition = val!),
+                  ),
+                  const SizedBox(height: 22),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await ref.child(empKey.toString()).update({
+                          "employeeOffice": selectedOffice,
+                          "employeePosition": selectedPosition,
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Save Changes"),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: isDisabled
+                            ? Colors.grey
+                            : Colors.redAccent,
+                      ),
+                      onPressed: isDisabled
+                          ? null
+                          : () async {
+                              await ref.child(empKey.toString()).update({
+                                "isDisabled": true,
+                              });
+                              Navigator.pop(context);
+                            },
+                      child: Text(
+                        isDisabled
+                            ? "Account Already Disabled"
+                            : "Disable Account",
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
-  //Widget _modernDropdown({required String value, required List<String> items, required ValueChanged<String?> onChanged, required String label}) { /* unchanged */ }
+  Widget _modernDropdown({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+    required String label,
+  }) => DropdownButtonHideUnderline(
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: DropdownButton<String>(
+        value: value,
+        isExpanded: true,
+        icon: const Icon(Icons.keyboard_arrow_down),
+        onChanged: onChanged,
+        items: items
+            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+            .toList(),
+      ),
+    ),
+  );
 }

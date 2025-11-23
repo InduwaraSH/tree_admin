@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:admin/job_detail.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+
+// firebase_dart imports
+import 'package:firebase_dart/firebase_dart.dart';
+import 'package:firebase_dart/database.dart';
 
 /// ---------------- MODEL ----------------
 class Job {
@@ -39,15 +43,21 @@ class AllJobsPage extends StatefulWidget {
 }
 
 class _AllJobsPageState extends State<AllJobsPage> {
-  final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref(
-    'Status_of_job',
-  );
+  late FirebaseDatabase _database;
+  late DatabaseReference _databaseRef;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize firebase_dart database and reference.
+    // NOTE: Ensure Firebase.app() is initialized in main() before showing this page.
+    final app = Firebase.app(); // must exist
+    _database = FirebaseDatabase(app: app);
+    _databaseRef = _database.reference().child('Status_of_job');
+
     _searchController.addListener(() {
       setState(() => _searchQuery = _searchController.text);
     });
@@ -57,6 +67,17 @@ class _AllJobsPageState extends State<AllJobsPage> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  // Helper: safe conversion of raw snapshot value to Map<String,dynamic>
+  Map<String, dynamic> _asMap(dynamic raw) {
+    if (raw == null) return {};
+    if (raw is Map) {
+      final out = <String, dynamic>{};
+      raw.forEach((k, v) => out[k.toString()] = v);
+      return out;
+    }
+    return {'value': raw};
   }
 
   String getFriendlyStatus(String statusKey) {
@@ -77,7 +98,7 @@ class _AllJobsPageState extends State<AllJobsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8F7FD),
+      backgroundColor: const Color(0xFFF8F7FD),
       body: SafeArea(
         child: Column(
           children: [
@@ -106,7 +127,6 @@ class _AllJobsPageState extends State<AllJobsPage> {
                     hintText: 'Search by location, city, or status...',
                     prefixIcon: const Icon(
                       Icons.done,
-
                       size: 20,
                       color: Colors.grey,
                     ),
@@ -130,11 +150,11 @@ class _AllJobsPageState extends State<AllJobsPage> {
               ),
             ),
 
-            // 🔄 Stream Content
+            // 🔄 Stream Content (using firebase_dart Event type)
             Expanded(
-              child: StreamBuilder(
+              child: StreamBuilder<Event>(
                 stream: _databaseRef.onValue,
-                builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+                builder: (context, AsyncSnapshot<Event> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
@@ -151,18 +171,28 @@ class _AllJobsPageState extends State<AllJobsPage> {
                   }
 
                   final List<Job> allJobs = [];
-                  final allCities = Map<String, dynamic>.from(
-                    snapshot.data!.snapshot.value as Map,
-                  );
+
+                  // snapshot.data!.snapshot.value can be Map or other
+                  final raw = snapshot.data!.snapshot.value;
+                  final allCities = <String, dynamic>{};
+
+                  if (raw is Map) {
+                    // convert keys to String and keep values as-is
+                    raw.forEach((k, v) => allCities[k.toString()] = v);
+                  } else {
+                    // if not a map, wrap as single entry (unlikely for your structure)
+                    allCities['unknown'] = raw;
+                  }
 
                   allCities.forEach((cityName, cityJobs) {
-                    final jobsMap = Map<String, dynamic>.from(cityJobs as Map);
+                    final jobsMap = _asMap(cityJobs);
                     jobsMap.forEach((serialNum, jobData) {
+                      final jobDataMap = _asMap(jobData);
                       allJobs.add(
                         Job.fromMap(
                           serialNum,
                           cityName,
-                          Map<String, dynamic>.from(jobData as Map),
+                          Map<String, dynamic>.from(jobDataMap),
                         ),
                       );
                     });
@@ -400,7 +430,6 @@ class JobStatsRow extends StatelessWidget {
               title: metric['title'] as String,
               count: count,
               total: totalCount,
-
               color: Colors.green,
             );
           }),
