@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:admin/person_reg_new.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,9 +16,10 @@ class DashboardUI extends StatefulWidget {
 
 class _DashboardUIState extends State<DashboardUI> {
   int? hoveredIndex;
+  late FirebaseDatabase database;
+  late DatabaseReference dbRef;
 
   // Firebase reference (native FlutterFire types)
-  late DatabaseReference dbRef;
 
   Map<String, int> cityOngoing = {};
   int totalOngoing = 0;
@@ -30,7 +32,10 @@ class _DashboardUIState extends State<DashboardUI> {
     // Initialize DatabaseReference using FlutterFire's firebase_database
     // This assumes you already called Firebase.initializeApp(...) in main.dart
     try {
-      dbRef = FirebaseDatabase.instance.ref().child('Ongoing_Count');
+      final app = Firebase.app();
+
+      database = FirebaseDatabase.instanceFor(app: app);
+      dbRef = database.ref().child('Ongoing_Count');
       _ongoingStream = dbRef.onValue;
       _ongoingSub = _ongoingStream.listen(
         (event) {
