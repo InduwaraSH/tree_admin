@@ -1,3 +1,5 @@
+// dashboard_ui.dart
+import 'dart:async';
 import 'dart:ui';
 import 'package:admin/person_reg_new.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -14,44 +16,89 @@ class DashboardUI extends StatefulWidget {
 class _DashboardUIState extends State<DashboardUI> {
   int? hoveredIndex;
 
-  // Firebase reference
-  final DatabaseReference dbRef = FirebaseDatabase.instance.ref().child(
-    "Ongoing_Count",
-  );
+  // Firebase reference (native FlutterFire types)
+  late DatabaseReference dbRef;
 
   Map<String, int> cityOngoing = {};
   int totalOngoing = 0;
   late Stream<DatabaseEvent> _ongoingStream;
+  StreamSubscription<DatabaseEvent>? _ongoingSub;
 
   @override
   void initState() {
     super.initState();
-    // Listen to realtime changes
-    _ongoingStream = dbRef.onValue;
-    _ongoingStream.listen((event) {
-      final snapshot = event.snapshot;
-      if (snapshot.exists) {
-        Map<String, dynamic> data = Map<String, dynamic>.from(
-          snapshot.value as Map,
-        );
-        int total = 0;
-        Map<String, int> temp = {};
+    // Initialize DatabaseReference using FlutterFire's firebase_database
+    // This assumes you already called Firebase.initializeApp(...) in main.dart
+    try {
+      dbRef = FirebaseDatabase.instance.ref().child('Ongoing_Count');
+      _ongoingStream = dbRef.onValue;
+      _ongoingSub = _ongoingStream.listen(
+        (event) {
+          final snapshot = event.snapshot;
+          if (snapshot.exists) {
+            final raw = snapshot.value;
+            // Safely map the dynamic structure returned by the realtime DB
+            Map<String, dynamic> data = {};
+            if (raw is Map) {
+              // The snapshot.value may be Map<dynamic, dynamic>
+              data = Map<String, dynamic>.from(
+                raw.map((k, v) => MapEntry(k.toString(), v)),
+              );
+            }
 
-        data.forEach((city, values) {
-          int ongoing = 0;
-          if (values is Map && values["ongoing"] != null) {
-            ongoing = values["ongoing"];
+            int total = 0;
+            Map<String, int> temp = {};
+
+            data.forEach((city, values) {
+              int ongoing = 0;
+              if (values is Map && values["ongoing"] != null) {
+                final v = values["ongoing"];
+                if (v is int) {
+                  ongoing = v;
+                } else if (v is String) {
+                  ongoing = int.tryParse(v) ?? 0;
+                } else if (v is double) {
+                  ongoing = v.toInt();
+                }
+              } else if (values is int) {
+                // if the value itself is an int
+                ongoing = values;
+              }
+              temp[city] = ongoing;
+              total += ongoing;
+            });
+
+            if (mounted) {
+              setState(() {
+                cityOngoing = temp;
+                totalOngoing = total;
+              });
+            }
+          } else {
+            // snapshot doesn't exist -> clear values
+            if (mounted) {
+              setState(() {
+                cityOngoing = {};
+                totalOngoing = 0;
+              });
+            }
           }
-          temp[city] = ongoing;
-          total += ongoing;
-        });
+        },
+        onError: (err) {
+          // handle errors silently (or print)
+          // print('DB stream error: $err');
+        },
+      );
+    } catch (e, st) {
+      // If something goes wrong, print error (won't change UI)
+      // print('Firebase DB init error: $e\n$st');
+    }
+  }
 
-        setState(() {
-          cityOngoing = temp;
-          totalOngoing = total;
-        });
-      }
-    });
+  @override
+  void dispose() {
+    _ongoingSub?.cancel();
+    super.dispose();
   }
 
   @override

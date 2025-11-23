@@ -2,93 +2,46 @@ import 'package:admin/branchRequestApprove_ARM.dart';
 import 'package:admin/branchRequestApprove_RM.dart';
 import 'package:admin/firebase_options.dart';
 import 'package:admin/Homepage.dart';
-import 'package:admin/pdf.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+import 'package:firebase_core/firebase_core.dart' as fd;
+import 'package:firebase_dart_flutter/firebase_dart_flutter.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  ); // This must come after ensureInitialized
-  runApp(MyApp());
+  // 1️⃣ Setup firebase_dart for Flutter
+  await FirebaseDartFlutter.setup(isolated: false);
+
+  // 2️⃣ Initialize Firebase DEFAULT app (firebase_core) with your FirebaseOptions
+  await fd.Firebase.initializeApp(
+    options: fd.FirebaseOptions(
+      apiKey: DefaultFirebaseOptions.currentPlatform.apiKey,
+      appId: DefaultFirebaseOptions.currentPlatform.appId,
+      messagingSenderId:
+          DefaultFirebaseOptions.currentPlatform.messagingSenderId,
+      projectId: DefaultFirebaseOptions.currentPlatform.projectId,
+      storageBucket: DefaultFirebaseOptions.currentPlatform.storageBucket,
+      authDomain: DefaultFirebaseOptions.currentPlatform.authDomain,
+      measurementId: DefaultFirebaseOptions.currentPlatform.measurementId,
+      databaseURL: DefaultFirebaseOptions.currentPlatform.databaseURL,
+    ),
+  );
+
+  // ✅ Now you can safely run the app
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Homev Page')),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DashboardScreen(),
-                  ),
-                );
-              },
-              child: const Text('Show register requests'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Branchrequestapprove_RM(),
-                  ),
-                );
-              },
-              child: const Text('Show Branch Requests'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const Branchrequestapprove_ARM(),
-                  ),
-                );
-              },
-              child: const Text('Show ARM Branch Requests'),
-            ),
-            SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => const OngoingCountPage(),
-            //       ),
-            //     );
-            //   },
-            //   child: const Text('Show Count Ongoing'),
-            // ),
-          ],
-        ),
-      ),
+      home: DashboardScreen(),
     );
   }
 }
