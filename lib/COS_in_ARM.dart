@@ -1,16 +1,7 @@
-import 'package:admin/deleteBranchdata.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 import 'package:flutter/material.dart';
 
 class CO_in_ARM {
-  DatabaseReference new_Branch_Data_Reference_CO = FirebaseDatabase.instance
-      .ref()
-      .child("CO_branch_data_saved");
-
-  DatabaseReference ARM_to_CO_Reference = FirebaseDatabase.instance.ref().child(
-    "Connection ARM_CO",
-  );
-
   Future<void> SaveData(
     String idnum,
     String name,
@@ -18,29 +9,29 @@ class CO_in_ARM {
     BuildContext context,
   ) async {
     try {
+      // 1. Initialize Database instance using the app
+      final app = Firebase.app();
+      final database = FirebaseDatabase(app: app);
+
+      // 2. Define References
+      final DatabaseReference new_Branch_Data_Reference_CO = database
+          .reference()
+          .child("CO_branch_data_saved");
+
+      final DatabaseReference ARM_to_CO_Reference = database.reference().child(
+        "Connection ARM_CO",
+      );
+
+      // 3. Perform Operations
       await new_Branch_Data_Reference_CO
           .child(idnum)
           .set({"CO_location": office})
-          .whenComplete(
-            () => ARM_to_CO_Reference.child(
+          .whenComplete(() async {
+            // Nested write operation on completion
+            await ARM_to_CO_Reference.child(
               office,
-            ).child(idnum).set({'CO_Name': name, 'CO_ID': idnum}),
-          )
-          .whenComplete(() {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(
-            //     content: Text(
-            //       'Branch data saved successfully',
-            //       style: TextStyle(
-            //         color: Colors.white,
-            //         fontFamily: 'sfpro',
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //     duration: Duration(seconds: 2),
-            //     backgroundColor: Colors.black,
-            //   ),
-            // );
+            ).child(idnum).set({'CO_Name': name, 'CO_ID': idnum});
+
             print("arm_CO done");
           });
 

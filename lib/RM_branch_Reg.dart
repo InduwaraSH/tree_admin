@@ -18,26 +18,27 @@ class Branchrequestapprove_RM_new extends StatefulWidget {
 
 class _Branchrequestapprove_RM_newState
     extends State<Branchrequestapprove_RM_new> {
-  late FirebaseDatabase _database;
-  late DatabaseReference _branchRequestRef;
+  late FirebaseDatabase database;
+  late DatabaseReference branchRequestRef;
 
   @override
   void initState() {
     super.initState();
-    // Ensure Firebase.app() is initialized in main() before this page is used.
     final app = Firebase.app();
-    _database = FirebaseDatabase(app: app);
-    _branchRequestRef = _database.reference().child("RM_branches");
+    database = FirebaseDatabase(app: app);
+    branchRequestRef = database.reference().child("RM_branches");
   }
 
   // Helper to normalize raw snapshot value into a Map<String, dynamic>
   Map<String, dynamic> _asMap(dynamic raw) {
     if (raw == null) return {};
+    // Ensure we cast to Map<dynamic, dynamic> first, then string keys
     if (raw is Map) {
       final out = <String, dynamic>{};
       raw.forEach((k, v) => out[k.toString()] = v);
       return out;
     }
+    // If it's a simple value, wrap it (though your data seems to be objects)
     return {'value': raw};
   }
 
@@ -46,32 +47,50 @@ class _Branchrequestapprove_RM_newState
     return Scaffold(
       backgroundColor: const Color(0xFFF8F7FD),
       body: StreamBuilder<Event>(
-        stream: _branchRequestRef.onValue,
+        stream: branchRequestRef.onValue,
         builder: (context, AsyncSnapshot<Event> snapshot) {
+          // 1. Check connection state
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
+          // 2. Check for errors
           if (snapshot.hasError) {
+            print("Firebase Error: ${snapshot.error}"); // DEBUG PRINT
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          final raw = snapshot.data?.snapshot.value;
-          if (raw == null) {
+          // 3. Check for null data or null snapshot value
+          if (!snapshot.hasData || snapshot.data?.snapshot.value == null) {
+            print("Snapshot is empty or null"); // DEBUG PRINT
             return const Center(child: Text('No requests found.'));
           }
 
-          // Convert raw map into a List<Map> preserving keys
+          final raw = snapshot.data!.snapshot.value;
+          print("Raw Data received: $raw"); // DEBUG PRINT
+
           final List<Map<String, dynamic>> requests = [];
+
+          // 4. IMPROVED PARSING: Handle both Map (keys "id1", "id2") and List (keys 0, 1, 2)
           if (raw is Map) {
             raw.forEach((k, v) {
               final map = _asMap(v);
               map['key'] = k.toString();
               requests.add(map);
             });
-          } else {
-            final map = _asMap(raw);
-            map['key'] = 'unknown';
-            requests.add(map);
+          } else if (raw is List) {
+            // Firebase returns a List if keys are sequential integers (0, 1, 2...)
+            for (int i = 0; i < raw.length; i++) {
+              if (raw[i] != null) {
+                final map = _asMap(raw[i]);
+                map['key'] = i.toString();
+                requests.add(map);
+              }
+            }
+          }
+
+          if (requests.isEmpty) {
+            return const Center(child: Text('No valid requests found.'));
           }
 
           return ListView.builder(
@@ -79,7 +98,6 @@ class _Branchrequestapprove_RM_newState
             padding: const EdgeInsets.symmetric(vertical: 10),
             itemBuilder: (context, index) {
               final request = requests[index];
-              // FIXED: Use the isolated Widget class
               return RMBranchCard(request: request);
             },
           );
@@ -89,6 +107,7 @@ class _Branchrequestapprove_RM_newState
   }
 }
 
+// ... The RMBranchCard and _HoverButton classes remain exactly the same as previous code ...
 /// FIXED: Extracted Card to separate StatefulWidget to isolate hover state
 class RMBranchCard extends StatefulWidget {
   final Map request;
@@ -104,7 +123,7 @@ class _RMBranchCardState extends State<RMBranchCard> {
   @override
   Widget build(BuildContext context) {
     final String branchID = widget.request['branchId'] ?? 'No ID';
-    final String branchTP = widget.request['branchTP'] ?? 'No TP';
+    final String branchTP = widget.request['mobileNumber'] ?? 'No TP';
     final String branchLocation =
         widget.request['branchLocation'] ?? 'No Location';
     final String branchManager =
@@ -116,7 +135,6 @@ class _RMBranchCardState extends State<RMBranchCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-        // Scale handles strictly within this widget now
         transformAlignment: Alignment.center,
         transform: Matrix4.identity()..scale(isHovered ? 1.01 : 1.0),
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -137,12 +155,10 @@ class _RMBranchCardState extends State<RMBranchCard> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // LEFT SECTION
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Title with Icon
                   Row(
                     children: [
                       CircleAvatar(
@@ -166,8 +182,6 @@ class _RMBranchCardState extends State<RMBranchCard> {
                     ],
                   ),
                   const SizedBox(height: 18),
-
-                  /// Branch Details
                   _infoRow("Branch ID", branchID),
                   _infoRow("Manager", branchManager),
                   _infoRow("Telephone", branchTP),
@@ -175,10 +189,7 @@ class _RMBranchCardState extends State<RMBranchCard> {
                 ],
               ),
             ),
-
             const SizedBox(width: 12),
-
-            // RIGHT SECTION (Buttons)
             Column(
               children: [
                 _HoverButton(
@@ -219,20 +230,11 @@ class _RMBranchCardState extends State<RMBranchCard> {
                                     .hasInternetAccess;
                                 if (!result) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                        'No internet connection',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'sfpro',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      duration: const Duration(seconds: 5),
+                                    const SnackBar(
+                                      content: Text('No internet connection'),
                                       backgroundColor: Colors.grey,
                                     ),
                                   );
-                                  return;
                                 } else {
                                   Savedatabeforedel_branch().SaveData(
                                     branchID,
@@ -338,26 +340,22 @@ class _RMBranchCardState extends State<RMBranchCard> {
   }
 }
 
-/// Custom Hover Button widget
 class _HoverButton extends StatefulWidget {
   final String label;
   final Color color;
   final VoidCallback onPressed;
-
   const _HoverButton({
     Key? key,
     required this.label,
     required this.color,
     required this.onPressed,
   }) : super(key: key);
-
   @override
   State<_HoverButton> createState() => _HoverButtonState();
 }
 
 class _HoverButtonState extends State<_HoverButton> {
   bool isHovered = false;
-
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -365,7 +363,6 @@ class _HoverButtonState extends State<_HoverButton> {
       onExit: (_) => setState(() => isHovered = false),
       child: GestureDetector(
         onTap: widget.onPressed,
-        // Ensure clicks are detected even on text/padding areas
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),

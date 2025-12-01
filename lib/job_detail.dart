@@ -151,7 +151,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
         children: [
           Row(
             children: [
-              const Icon(Icons.done, size: 24, color: Colors.green),
+              const Icon(Icons.place, size: 24, color: Colors.green),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -244,7 +244,7 @@ class TimelineStep extends StatelessWidget {
                 else
                   const Spacer(),
                 Icon(
-                  isCompleted ? Icons.done : Icons.done,
+                  isCompleted ? Icons.done_all_rounded : Icons.done_rounded,
                   color: isCompleted ? Colors.green : Colors.grey.shade400,
                   size: 28,
                 ),

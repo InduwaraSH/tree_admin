@@ -254,8 +254,23 @@ class _Emp_ManageState extends State<Emp_Manage> {
   }
 
   void openEditSheet(BuildContext context, dynamic empKey, Map empData) {
-    final officeOptions = ["Embilipitya", "Matara", "Galle", "Head Office"];
-    final positionOptions = ["RM", "ARM", "CO"];
+    final officeOptions = [
+      "Head Office",
+      'Embilipitya',
+      'Matara',
+      'Galle',
+      "Hambantota",
+      "Colombo",
+      "Tangalle",
+      "Weligama",
+      "Ahangama",
+      "Kamburupitiya",
+      "Akuressa",
+      "Deniyaya",
+      'Jaffna',
+      'Ratnapura',
+    ];
+    final positionOptions = ["RM", "ARM", "CO", "AGM", "DGM"];
 
     String selectedOffice = officeOptions.contains(empData["employeeOffice"])
         ? empData["employeeOffice"]
@@ -321,42 +336,124 @@ class _Emp_ManageState extends State<Emp_Manage> {
                   SizedBox(
                     width: double.infinity,
                     height: 52,
+
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                      ),
                       onPressed: () async {
-                        await ref.child(empKey.toString()).update({
-                          "employeeOffice": selectedOffice,
-                          "employeePosition": selectedPosition,
-                        });
-                        Navigator.pop(context);
+                        if (selectedOffice == "Head Office" &&
+                            (selectedPosition == "RM" ||
+                                selectedPosition == "ARM" ||
+                                selectedPosition == "DRM")) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                title: const Text(
+                                  "Invalid Position",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                backgroundColor: Colors.black,
+                                content: const Text(
+                                  "Please change the Selected Position for Head Office.",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text(
+                                      "OK",
+                                      style: TextStyle(
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else if ((selectedPosition == "AGM" ||
+                                selectedPosition == "DGM") &&
+                            selectedOffice != "Head Office") {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                title: const Text(
+                                  "Invalid Position",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                backgroundColor: Colors.black,
+                                content: const Text(
+                                  "This location not valid for the selected Position. Please select Head Office.",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text(
+                                      "OK",
+                                      style: TextStyle(
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          await ref.child(empKey.toString()).update({
+                            "employeeOffice": selectedOffice,
+                            "employeePosition": selectedPosition,
+                          });
+                          Navigator.pop(context);
+                        }
                       },
-                      child: const Text("Save Changes"),
+                      child: const Text(
+                        "Save Changes",
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: isDisabled
-                            ? Colors.grey
-                            : Colors.redAccent,
-                      ),
-                      onPressed: isDisabled
-                          ? null
-                          : () async {
-                              await ref.child(empKey.toString()).update({
-                                "isDisabled": true,
-                              });
-                              Navigator.pop(context);
-                            },
-                      child: Text(
-                        isDisabled
-                            ? "Account Already Disabled"
-                            : "Disable Account",
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   height: 52,
+                  //   child: FilledButton(
+                  //     style: FilledButton.styleFrom(
+                  //       backgroundColor: isDisabled
+                  //           ? Colors.grey
+                  //           : Colors.redAccent,
+                  //     ),
+                  //     onPressed: isDisabled
+                  //         ? null
+                  //         : () async {
+                  //             await ref.child(empKey.toString()).update({
+                  //               "isDisabled": true,
+                  //             });
+                  //             Navigator.pop(context);
+                  //           },
+                  //     child: Text(
+                  //       isDisabled
+                  //           ? "Account Already Disabled"
+                  //           : "Disable Account",
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             );
