@@ -16,6 +16,8 @@ class AuthReg_EMP_ONLY {
     String office,
     String mobile,
     String name,
+    email,
+    nic,
   ) async {
     bool result = await InternetConnection().hasInternetAccess;
     if (!result) {
@@ -64,7 +66,7 @@ class AuthReg_EMP_ONLY {
 
       // Save data before deletion
       await Savedatabeforedel()
-          .SaveData(IDnum, position, office, mobile, name)
+          .SaveData(IDnum, position, office, mobile, name, email, nic)
           .whenComplete(() async {
             await CO_in_ARM().SaveData(IDnum, name, office, context);
           })

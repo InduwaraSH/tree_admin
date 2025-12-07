@@ -7,13 +7,15 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 class AuthReg {
   Future<void> registerUser(
     BuildContext context,
-    String emailAddress,
+    String id,
     String password,
     String IDnum,
     String position,
     String office,
     String mobile,
     String name,
+    String email,
+    String nic,
   ) async {
     bool result = await InternetConnection().hasInternetAccess;
     if (!result) {
@@ -56,13 +58,13 @@ class AuthReg {
 
       // Create user
       await auth.createUserWithEmailAndPassword(
-        email: emailAddress,
+        email: email,
         password: password,
       );
 
       // Save data before deletion
       await Savedatabeforedel()
-          .SaveData(IDnum, position, office, mobile, name)
+          .SaveData(IDnum, position, office, mobile, name, email, nic)
           .whenComplete(() async {
             await deleteRealtimeData().deleteData(IDnum);
           })

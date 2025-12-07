@@ -105,6 +105,8 @@ class _PersonRequestCardState extends State<PersonRequestCard> {
         widget.request['employeePosition'] ?? 'No Job Position';
     final String office_location =
         widget.request['employeeLocation'] ?? 'No Office';
+    final String email = widget.request['employeeEmail'] ?? 'No Email';
+    final String nic = widget.request['employeeNIC'] ?? 'No NIC';
 
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
@@ -217,6 +219,8 @@ class _PersonRequestCardState extends State<PersonRequestCard> {
                                     office_location,
                                     mobileNumber,
                                     personName,
+                                    email,
+                                    nic,
                                   );
                                 } else {
                                   AuthReg().registerUser(
@@ -228,6 +232,8 @@ class _PersonRequestCardState extends State<PersonRequestCard> {
                                     office_location,
                                     mobileNumber,
                                     personName,
+                                    email,
+                                    nic,
                                   );
                                 }
                               },

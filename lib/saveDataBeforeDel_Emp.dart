@@ -7,6 +7,8 @@ class Savedatabeforedel {
     String office,
     String mobile,
     String name,
+    String email,
+    String nic,
   ) async {
     try {
       // 1. Get the initialized Firebase App
@@ -20,12 +22,26 @@ class Savedatabeforedel {
           .reference()
           .child("employee_data_saved");
 
-      await new_Employee_Data_Reference.child(idnum).set({
-        'employeeName': name,
-        'employeePosition': position,
-        'employeeOffice': office,
-        'employeeMobile': mobile,
-      });
+      await new_Employee_Data_Reference
+          .child(idnum)
+          .set({
+            'employeeName': name,
+            'employeePosition': position,
+            'employeeOffice': office,
+            'employeeMobile': mobile,
+            'employeeEmail': email,
+            'employeeNIC': nic,
+          })
+          .then((_) {
+            final DatabaseReference new_Employee_Data_Reference = database
+                .reference()
+                .child("Id_to_mail");
+
+            new_Employee_Data_Reference.child(idnum).set({
+              'email': email,
+              'id': idnum,
+            });
+          });
       print('Data saved successfully');
     } catch (e) {
       print('Error saving data: $e');

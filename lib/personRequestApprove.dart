@@ -24,6 +24,8 @@ class _personrequestState extends State<personrequest> {
     final String mobileNumber = request['employeeMobile'] ?? 'No Mobile';
     final String jobPosition = request['employeePosition'] ?? 'No Job Position';
     final String office_location = request['employeeLocation'] ?? 'No Office';
+    final String email = request['employeeEmail'] ?? 'No Email';
+    final String nic = request['employeeNIC'] ?? 'No NIC';
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -231,13 +233,15 @@ class _personrequestState extends State<personrequest> {
                                   } else {
                                     AuthReg().registerUser(
                                       context,
-                                      "$personId@gmail.com",
+                                      personId,
                                       personPassword,
                                       personId,
                                       jobPosition,
                                       office_location,
                                       mobileNumber,
                                       personName,
+                                      email,
+                                      nic,
                                     );
                                   }
                                 },
