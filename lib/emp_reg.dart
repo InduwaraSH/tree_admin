@@ -9,7 +9,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 class AuthReg_EMP_ONLY {
   Future<void> registerUser(
     BuildContext context,
-    String emailAddress,
+    String id,
     String password,
     String IDnum,
     String position,
@@ -60,7 +60,7 @@ class AuthReg_EMP_ONLY {
 
       // Create user
       await auth.createUserWithEmailAndPassword(
-        email: emailAddress,
+        email: email,
         password: password,
       );
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_dart/firebase_dart.dart';
 
 class Savedatabeforedel {
@@ -33,12 +35,18 @@ class Savedatabeforedel {
             'employeeNIC': nic,
           })
           .then((_) {
-            final DatabaseReference new_Employee_Data_Reference = database
-                .reference()
-                .child("Id_to_mail");
+            DatabaseReference id_to_mail = database.reference().child(
+              "Id_to_mail",
+            );
 
-            new_Employee_Data_Reference.child(idnum).set({
-              'email': email,
+            id_to_mail.child(idnum).set({'email': email});
+          })
+          .then((_) {
+            DatabaseReference mail_to_id = database.reference().child(
+              "Email_to_id",
+            );
+
+            mail_to_id.child(email.replaceAll('.', '_').toString()).set({
               'id': idnum,
             });
           });
